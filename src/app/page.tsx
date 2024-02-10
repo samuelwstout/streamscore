@@ -9,7 +9,8 @@ export default function Home() {
         ></iframe>
         <div className="p-10 flex flex-col items-center justify-center gap-5">
           <p>
-            Hey! I&apos;m building a music education AI tool called Streamscore.
+            Hey! I&apos;m building an AI tool for music education called
+            Streamscore.
           </p>
           <p>
             As you can see, I&apos;m busy building and plan to have a first
