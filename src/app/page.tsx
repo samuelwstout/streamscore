@@ -13,7 +13,7 @@ export default function Home() {
             Streamscore.
           </p>
           <p>
-            As you can see, I&apos;m busy building and plan to have a first
+            As you can see, I&apos;m busy building and plan to have the first
             version out soon :)
           </p>
         </div>
