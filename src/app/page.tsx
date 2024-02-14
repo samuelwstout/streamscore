@@ -1,12 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { handleSubmit } from "../api/handleSubmit";
+import TypewriterEffect from "@/components/typewriterEffect";
 
 export default function Home() {
   const [input, setInput] = useState("");
+  const [response, setResponse] = useState("");
 
-  const handleSubmit = () => {
-    console.log(input);
+  const handleClick = async () => {
+    const response = await handleSubmit(input);
+    const {
+      message: { content },
+    } = response;
+    if (content) setResponse(content);
     setInput("");
   };
 
@@ -20,12 +27,13 @@ export default function Home() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") handleSubmit();
+            if (e.key === "Enter") handleClick();
           }}
         />
-        <button onClick={handleSubmit} className="border p-2 rounded">
+        <button onClick={handleClick} className="border p-2 rounded">
           Submit
         </button>
+        {response && <TypewriterEffect text={response} />}
       </div>
     </main>
   );
