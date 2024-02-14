@@ -11,7 +11,7 @@ const TypewriterEffect = ({ text }: { text: string }) => {
       if (index >= text.length) {
         clearInterval(intervalId);
       }
-    }, 15);
+    }, 5);
     return () => clearInterval(intervalId);
   }, [text]);
 
