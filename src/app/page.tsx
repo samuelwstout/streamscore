@@ -1,9 +1,12 @@
-import { UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 export default function Main() {
   return (
     <main className="h-screen">
-      <UserButton afterSignOutUrl="/" />
+      <h1>Landing page</h1>
+      <Link className="border-2 border-black p-1" href="/chat">
+        Chat
+      </Link>
     </main>
   );
 }
