@@ -2,6 +2,7 @@
 import { UserButton, useUser } from "@clerk/nextjs";
 import { useChat } from "ai/react";
 import Image from "next/image";
+import { useEffect } from "react";
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat();
@@ -14,6 +15,19 @@ export default function Chat() {
     const newHeight = Math.max(target.scrollHeight, minHeight);
     target.style.height = `${newHeight}px`;
   }
+
+  useEffect(() => console.log(messages), [messages]);
+
+  /*
+    Next task: Set up a database to store conversations.
+    When the user opens the app, automatically start a new conversation.
+    If and when there's a first input/question, find a way to summarize the topic based on that first question.
+    POST that conversation with the summarized name and the content (the messages array) to the database.
+
+    If there are conversations, render them (the names) on the left sidebar.
+    If a conversation is clicked, render the messages in the main content area and allow the conversation to continue.
+    ... so on. there's more I need to cover, but for now: just setup a database and be able to add conversations to it.
+  */
 
   return (
     <main className="h-full">
