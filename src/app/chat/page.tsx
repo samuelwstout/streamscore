@@ -19,14 +19,7 @@ export default function Chat() {
   useEffect(() => console.log(messages), [messages]);
 
   /*
-    Next task: Set up a database to store conversations.
-    When the user opens the app, automatically start a new conversation.
-    If and when there's a first input/question, find a way to summarize the topic based on that first question.
-    POST that conversation with the summarized name and the content (the messages array) to the database.
-
-    If there are conversations, render them (the names) on the left sidebar.
-    If a conversation is clicked, render the messages in the main content area and allow the conversation to continue.
-    ... so on. there's more I need to cover, but for now: just setup a database and be able to add conversations to it.
+    When the user types in the first question: I want to create a conversation with that question input as the name of the conversation. 
   */
 
   return (
