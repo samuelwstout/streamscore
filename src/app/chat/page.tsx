@@ -2,14 +2,12 @@
 import { UserButton, useUser } from "@clerk/nextjs";
 import { useChat } from "ai/react";
 import Image from "next/image";
-import { trpc } from "../_trpc/client";
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat();
   const { user } = useUser();
 
-  const getConversations = trpc.getConversations.useQuery();
-  const createConversation = trpc.createConversation.useMutation();
+  // const getConversations = trpc.getConversations.useQuery();
 
   /*
     Need to strategize creating and updating conversations as the conversation takes place.
@@ -32,9 +30,9 @@ export default function Chat() {
           <h1>Streamscore</h1>
         </div>
         <div className="flex-1 flex flex-col">
-          {getConversations?.data?.map((conversation) => (
+          {/* {getConversations?.data?.map((conversation) => (
             <div key={conversation.id}>{conversation.name}</div>
-          ))}
+          ))} */}
         </div>
         <div className="h-20 flex items-center px-3">
           <UserButton afterSignOutUrl="/" />

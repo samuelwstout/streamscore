@@ -1,5 +1,4 @@
 import Link from "next/link";
-import TodoList from "./_components/TodoList";
 
 export default function Main() {
   return (
@@ -8,7 +7,6 @@ export default function Main() {
       <Link className="border-2 border-black p-1" href="/chat">
         Chat
       </Link>
-      <TodoList />
     </main>
   );
 }
