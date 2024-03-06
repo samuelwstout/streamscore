@@ -2,11 +2,20 @@
 import { UserButton, useUser } from "@clerk/nextjs";
 import { useChat } from "ai/react";
 import Image from "next/image";
-import { useEffect } from "react";
+import { trpc } from "../_trpc/client";
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat();
   const { user } = useUser();
+
+  const getConversations = trpc.getConversations.useQuery();
+  const createConversation = trpc.createConversation.useMutation();
+
+  /*
+    Need to strategize creating and updating conversations as the conversation takes place.
+    As well as assigning conversations only to the ones that belong to each user.
+    Describe that in more detail before moving forward, and reconsider schema.
+  */
 
   function autoResize(e: React.FormEvent<HTMLTextAreaElement>) {
     const target = e.target as HTMLTextAreaElement;
@@ -16,19 +25,17 @@ export default function Chat() {
     target.style.height = `${newHeight}px`;
   }
 
-  useEffect(() => console.log(messages), [messages]);
-
-  /*
-    When the user types in the first question: I want to create a conversation with that question input as the name of the conversation. 
-  */
-
   return (
     <main className="h-full">
       <div className="w-1/6 flex flex-col bg-gray-50 h-screen fixed">
         <div className="h-20 flex items-center px-3">
           <h1>Streamscore</h1>
         </div>
-        <div className="flex-1 flex flex-col"></div>
+        <div className="flex-1 flex flex-col">
+          {getConversations?.data?.map((conversation) => (
+            <div key={conversation.id}>{conversation.name}</div>
+          ))}
+        </div>
         <div className="h-20 flex items-center px-3">
           <UserButton afterSignOutUrl="/" />
           {user && <p className="text-sm pl-2">{user.fullName}</p>}
