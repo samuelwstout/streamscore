@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^4.29.7",
+    "@libsql/client": "^0.5.3",
     "ai": "^2.2.36",
+    "drizzle-orm": "^0.29.5",
     "next": "14.1.0",
     "openai": "^4.27.1",
     "react": "^18",
@@ -21,6 +23,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "drizzle-kit": "^0.20.14",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "postcss": "^8",

@@ -2,26 +2,11 @@
 import { UserButton, useUser } from "@clerk/nextjs";
 import { useChat } from "ai/react";
 import Image from "next/image";
+import { autoResize } from "@/utils/autoResizeInput";
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit } = useChat();
   const { user } = useUser();
-
-  // const getConversations = trpc.getConversations.useQuery();
-
-  /*
-    Need to strategize creating and updating conversations as the conversation takes place.
-    As well as assigning conversations only to the ones that belong to each user.
-    Describe that in more detail before moving forward, and reconsider schema.
-  */
-
-  function autoResize(e: React.FormEvent<HTMLTextAreaElement>) {
-    const target = e.target as HTMLTextAreaElement;
-    target.style.height = "inherit";
-    const minHeight = parseInt(window.getComputedStyle(target).minHeight, 10);
-    const newHeight = Math.max(target.scrollHeight, minHeight);
-    target.style.height = `${newHeight}px`;
-  }
 
   return (
     <main className="h-full">
@@ -29,11 +14,7 @@ export default function Chat() {
         <div className="h-20 flex items-center px-3">
           <h1>Streamscore</h1>
         </div>
-        <div className="flex-1 flex flex-col">
-          {/* {getConversations?.data?.map((conversation) => (
-            <div key={conversation.id}>{conversation.name}</div>
-          ))} */}
-        </div>
+        <div className="flex-1 flex flex-col"></div>
         <div className="h-20 flex items-center px-3">
           <UserButton afterSignOutUrl="/" />
           {user && <p className="text-sm pl-2">{user.fullName}</p>}
