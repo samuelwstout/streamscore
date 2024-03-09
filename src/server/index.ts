@@ -13,10 +13,20 @@ const db = drizzle(sqlite);
 
 migrate(db, { migrationsFolder: "drizzle" });
 
+// Procedures need to be tested.
+
 export const appRouter = router({
   getConversations: publicProcedure.query(async () => {
-    return await db.select().from(conversations).all();
-    // for current user.
+    const chats = db.select().from(conversations).all();
+
+    const users = await clerkClient.users.getUserList({
+      userId: chats.map((chat) => chat.userId!),
+    });
+
+    return chats.map((chat) => ({
+      chat,
+      user: users.find((user) => user.id === chat.userId),
+    }));
   }),
   addConversation: publicProcedure
     .input(
