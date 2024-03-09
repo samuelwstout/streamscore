@@ -10,7 +10,7 @@ export const conversations = sqliteTable(
   "conversations",
   {
     id: integer("id").primaryKey(),
-    userId: integer("userId"),
+    userId: text("userId"),
     title: text("title"),
     messages: blob("messages", { mode: "json" }).$type<string[]>(),
   },
