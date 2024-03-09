@@ -1,6 +1,6 @@
 CREATE TABLE `conversations` (
 	`id` integer PRIMARY KEY NOT NULL,
-	`userId` integer,
+	`userId` text,
 	`title` text,
 	`messages` blob
 );
