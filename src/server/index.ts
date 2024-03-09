@@ -14,8 +14,25 @@ const db = drizzle(sqlite);
 migrate(db, { migrationsFolder: "drizzle" });
 
 export const appRouter = router({
-  // get all conversations for current user
-  // create conversation
+  getConversations: publicProcedure.query(async () => {
+    return await db.select().from(conversations).all();
+    // for current user.
+  }),
+  addConversation: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        title: z.string(),
+        messages: z.array(z.string()),
+      })
+    )
+    .mutation(async (opts) => {
+      await db.insert(conversations).values({
+        userId: opts.input.userId,
+        title: opts.input.title,
+        messages: opts.input.messages,
+      });
+    }),
 });
 
 export type AppRouter = typeof appRouter;
