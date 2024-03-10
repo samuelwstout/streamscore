@@ -13,8 +13,6 @@ const db = drizzle(sqlite);
 
 migrate(db, { migrationsFolder: "drizzle" });
 
-// Procedures need to be tested.
-
 export const appRouter = router({
   getConversations: publicProcedure.query(async () => {
     const chats = db.select().from(conversations).all();
