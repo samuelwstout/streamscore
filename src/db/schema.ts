@@ -5,6 +5,7 @@ import {
   blob,
   index,
 } from "drizzle-orm/sqlite-core";
+import type { Message } from "ai";
 
 export const conversations = sqliteTable(
   "conversations",
@@ -12,7 +13,7 @@ export const conversations = sqliteTable(
     id: integer("id").primaryKey(),
     userId: text("userId"),
     title: text("title"),
-    messages: blob("messages", { mode: "json" }).$type<string[]>(),
+    messages: blob("messages", { mode: "json" }).$type<Message[]>(),
   },
   (table) => {
     return {

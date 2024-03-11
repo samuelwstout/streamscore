@@ -3,10 +3,26 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import { useChat } from "ai/react";
 import Image from "next/image";
 import { autoResize } from "@/utils/autoResizeInput";
+import { useEffect, useState } from "react";
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const [chatFinished, setChatFinished] = useState(false);
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
+    onFinish: () => setChatFinished(true),
+  });
   const { user } = useUser();
+
+  const callAddConversation = () => {
+    // Your API call logic here
+    console.log("Calling API with messages:", messages);
+  };
+
+  useEffect(() => {
+    if (chatFinished && messages.length === 2) {
+      callAddConversation();
+      setChatFinished(false);
+    }
+  }, [chatFinished, messages]);
 
   return (
     <main className="h-full">
@@ -43,6 +59,12 @@ export default function Chat() {
               onChange={handleInputChange}
               onInput={autoResize}
               rows={1}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit(e as any);
+                }
+              }}
             />
             <button
               type="submit"
