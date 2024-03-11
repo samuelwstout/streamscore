@@ -12,10 +12,20 @@ export default function Chat() {
   });
   const { user } = useUser();
 
-  const callAddConversation = () => {
-    // Your API call logic here
-    console.log("Calling API with messages:", messages);
-  };
+  async function callAddConversation() {
+    const conversationData = {
+      title: messages[0].content,
+      userId: user?.id,
+      messages: messages,
+    };
+    await fetch("api/addConversation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(conversationData),
+    });
+  }
 
   useEffect(() => {
     if (chatFinished && messages.length === 2) {
