@@ -23,3 +23,4 @@ export const conversations = sqliteTable(
 );
 
 export type InsertConversation = typeof conversations.$inferInsert;
+export type SelectConversation = typeof conversations.$inferSelect;

@@ -4,6 +4,7 @@ import { useChat } from "ai/react";
 import Image from "next/image";
 import { autoResize } from "@/utils/autoResizeInput";
 import { useEffect, useState } from "react";
+import type { SelectConversation } from "@/db/schema";
 
 export default function Chat() {
   const [chatFinished, setChatFinished] = useState(false);
@@ -11,8 +12,29 @@ export default function Chat() {
     onFinish: () => setChatFinished(true),
   });
   const { user } = useUser();
+  const [conversations, setConversations] = useState<SelectConversation[]>([]);
 
-  async function callAddConversation() {
+  useEffect(() => {
+    getConversations();
+  }, []);
+
+  useEffect(() => {
+    if (chatFinished && messages.length === 2) {
+      addConversation();
+      setChatFinished(false);
+    }
+  }, [chatFinished, messages]);
+
+  async function getConversations() {
+    const response = await fetch("api/getConversations");
+    if (!response.ok) {
+      throw new Error("Failed to fetch conversations");
+    }
+    const data = await response.json();
+    setConversations(data);
+  }
+
+  async function addConversation() {
     const conversationData = {
       title: messages[0].content,
       userId: user?.id,
@@ -27,20 +49,17 @@ export default function Chat() {
     });
   }
 
-  useEffect(() => {
-    if (chatFinished && messages.length === 2) {
-      callAddConversation();
-      setChatFinished(false);
-    }
-  }, [chatFinished, messages]);
-
   return (
     <main className="h-full">
       <div className="w-1/6 flex flex-col bg-gray-50 h-screen fixed">
         <div className="h-20 flex items-center px-3">
           <h1>Streamscore</h1>
         </div>
-        <div className="flex-1 flex flex-col"></div>
+        <div className="flex-1 flex flex-col">
+          {conversations.map((conversation) => (
+            <div key={conversation.id}>{conversation.title}</div>
+          ))}
+        </div>
         <div className="h-20 flex items-center px-3">
           <UserButton afterSignOutUrl="/" />
           {user && <p className="text-sm pl-2">{user.fullName}</p>}
