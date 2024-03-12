@@ -8,9 +8,10 @@ import type { SelectConversation } from "@/db/schema";
 
 export default function Chat() {
   const [chatFinished, setChatFinished] = useState(false);
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    onFinish: () => setChatFinished(true),
-  });
+  const { messages, input, handleInputChange, handleSubmit, setMessages } =
+    useChat({
+      onFinish: () => setChatFinished(true),
+    });
   const { user } = useUser();
   const [conversations, setConversations] = useState<SelectConversation[]>([]);
 
@@ -49,6 +50,15 @@ export default function Chat() {
     });
   }
 
+  function getMessages(conversationId: number) {
+    const conversation = conversations.find((i) => i.id === conversationId);
+    if (conversation?.messages) {
+      setMessages(conversation.messages);
+    } else {
+      console.error("Can't find conversation");
+    }
+  }
+
   return (
     <main className="h-full">
       <div className="w-1/6 flex flex-col bg-gray-50 h-screen fixed">
@@ -57,7 +67,12 @@ export default function Chat() {
         </div>
         <div className="flex-1 flex flex-col">
           {conversations.map((conversation) => (
-            <div key={conversation.id}>{conversation.title}</div>
+            <div
+              key={conversation.id}
+              onClick={() => getMessages(conversation.id)}
+            >
+              {conversation.title}
+            </div>
           ))}
         </div>
         <div className="h-20 flex items-center px-3">
