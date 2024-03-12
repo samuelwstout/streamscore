@@ -15,6 +15,9 @@ export default function Chat() {
   const { user } = useUser();
   const [conversations, setConversations] = useState<SelectConversation[]>([]);
 
+  // Create a button to initialize new conversation
+  // Update current conversations if messages array changes
+
   useEffect(() => {
     getConversations();
   }, []);
@@ -62,17 +65,26 @@ export default function Chat() {
   return (
     <main className="h-full">
       <div className="w-1/6 flex flex-col bg-gray-50 h-screen fixed">
-        <div className="h-20 flex items-center px-3">
+        <div className="h-20 flex items-center justify-between px-3">
           <h1>Streamscore</h1>
+          <button>
+            <Image
+              src="/startConversation.png"
+              alt="start conversation"
+              width={25}
+              height={25}
+            />
+          </button>
         </div>
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col px-3 py-3 gap-2">
           {conversations.map((conversation) => (
-            <div
+            <button
               key={conversation.id}
+              className="flex flex-row items-start"
               onClick={() => getMessages(conversation.id)}
             >
               {conversation.title}
-            </div>
+            </button>
           ))}
         </div>
         <div className="h-20 flex items-center px-3">
