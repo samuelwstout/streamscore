@@ -8,15 +8,13 @@ import type { SelectConversation } from "@/db/schema";
 
 export default function Chat() {
   const [chatFinished, setChatFinished] = useState(false);
+  const [conversations, setConversations] = useState<SelectConversation[]>([]);
+  const [conversationId, setConversationId] = useState<null | number>(null);
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat({
       onFinish: () => setChatFinished(true),
     });
   const { user } = useUser();
-  const [conversations, setConversations] = useState<SelectConversation[]>([]);
-
-  // Create a button to initialize new conversation
-  // Update current conversations if messages array changes
 
   useEffect(() => {
     getConversations();
@@ -26,6 +24,8 @@ export default function Chat() {
     if (chatFinished && messages.length === 2) {
       addConversation();
       setChatFinished(false);
+    } else if (chatFinished && messages.length > 2) {
+      updateConversation();
     }
   }, [chatFinished, messages]);
 
@@ -53,13 +53,38 @@ export default function Chat() {
     });
   }
 
-  function getMessages(conversationId: number) {
-    const conversation = conversations.find((i) => i.id === conversationId);
+  function getMessages(clickId: number) {
+    const conversation = conversations.find((i) => i.id === clickId);
     if (conversation?.messages) {
       setMessages(conversation.messages);
     } else {
       console.error("Can't find conversation");
     }
+    setConversationId(clickId);
+  }
+
+  async function updateConversation() {
+    const updatedConversations = conversations.map((conv) => {
+      if (conv.id === conversationId) {
+        return { ...conv, messages: messages };
+      }
+      return conv;
+    });
+    setConversations(updatedConversations);
+    const response = await fetch(`api/updateConversation/${conversationId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ messages }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update conversation");
+    }
+
+    // const updatedConversation = await response.json();
+    // console.log({ updatedConversation });
   }
 
   return (
@@ -67,7 +92,12 @@ export default function Chat() {
       <div className="w-1/6 flex flex-col bg-gray-50 h-screen fixed">
         <div className="h-20 flex items-center justify-between px-3">
           <h1>Streamscore</h1>
-          <button>
+          <button
+            onClick={() => {
+              setMessages([]);
+              setConversationId(null);
+            }}
+          >
             <Image
               src="/startConversation.png"
               alt="start conversation"
@@ -94,14 +124,22 @@ export default function Chat() {
       </div>
       <div className="w-5/6 ml-auto">
         <div className="py-10"></div>
-        <div className="px-10 flex flex-col justify-center items-center">
-          {messages.map((m) => (
-            <div className="pb-5 w-1/2 leading-7" key={m.id}>
-              {m.role === "user" ? "You: " : "Streamscore: "}
-              {m.content}
+        {messages.length === 0 ? (
+          <div className="px-10 h-screen flex justify-center items-center">
+            <div>
+              <h1>Hello! How can I help you?</h1>
             </div>
-          ))}
-        </div>
+          </div>
+        ) : (
+          <div className="px-10 flex flex-col justify-center items-center">
+            {messages.map((m) => (
+              <div className="pb-5 w-1/2 leading-7" key={m.id}>
+                {m.role === "user" ? "You: " : "Streamscore: "}
+                {m.content}
+              </div>
+            ))}
+          </div>
+        )}
         <div className="py-12"></div>
         <form
           onSubmit={handleSubmit}
