@@ -10,6 +10,7 @@ export default function Chat() {
   const [chatFinished, setChatFinished] = useState(false);
   const [conversations, setConversations] = useState<SelectConversation[]>([]);
   const [conversationId, setConversationId] = useState<null | number>(null);
+  const [isLoadingConversations, setIsLoadingConversations] = useState(false);
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat({
       onFinish: () => setChatFinished(true),
@@ -30,12 +31,19 @@ export default function Chat() {
   }, [chatFinished, messages]);
 
   async function getConversations() {
-    const response = await fetch("api/getConversations");
-    if (!response.ok) {
-      throw new Error("Failed to fetch conversations");
+    setIsLoadingConversations(true);
+    try {
+      const response = await fetch("api/getConversations");
+      if (!response.ok) {
+        throw new Error("Failed to fetch conversations");
+      }
+      const data = await response.json();
+      setConversations(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoadingConversations(false);
     }
-    const data = await response.json();
-    setConversations(data);
   }
 
   async function addConversation() {
@@ -107,6 +115,7 @@ export default function Chat() {
           </button>
         </div>
         <div className="flex-1 flex flex-col px-3 py-3 gap-2">
+          {isLoadingConversations && <p>Loading conversations...</p>}
           {conversations.map((conversation) => (
             <button
               key={conversation.id}
