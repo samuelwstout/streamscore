@@ -132,7 +132,7 @@ export default function Chat() {
             .map((conversation) => (
               <button
                 key={conversation.id}
-                className="flex flex-row items-start hover:bg-gray-200"
+                className="flex flex-row items-center hover:bg-gray-200 overflow-hidden whitespace-nowrap leading-normal min-h-8 px-2 rounded"
                 onClick={() => getMessages(conversation.id)}
               >
                 {conversation.title}
