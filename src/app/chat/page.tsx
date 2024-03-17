@@ -11,6 +11,7 @@ export default function Chat() {
   const [conversations, setConversations] = useState<SelectConversation[]>([]);
   const [conversationId, setConversationId] = useState<null | number>(null);
   const [isLoadingConversations, setIsLoadingConversations] = useState(false);
+  const [isNewConversation, setIsNewConversation] = useState(true);
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat({
       onFinish: () => setChatFinished(true),
@@ -22,21 +23,25 @@ export default function Chat() {
   }, []);
 
   useEffect(() => {
-    if (chatFinished && messages.length === 2) {
+    if (chatFinished && isNewConversation) {
       addConversation();
       setChatFinished(false);
-    } else if (chatFinished && messages.length > 2) {
+    } else if (chatFinished && !isNewConversation) {
       updateConversation();
     }
   }, [chatFinished, messages]);
+
+  function startNewConversation() {
+    setMessages([]);
+    setConversationId(null);
+    setIsNewConversation(true);
+  }
 
   async function getConversations() {
     setIsLoadingConversations(true);
     try {
       const response = await fetch("api/getConversations");
-      if (!response.ok) {
-        throw new Error("Failed to fetch conversations");
-      }
+      if (!response.ok) throw new Error("Failed to fetch conversations");
       const data = await response.json();
       setConversations(data);
     } catch (error) {
@@ -47,21 +52,32 @@ export default function Chat() {
   }
 
   async function addConversation() {
-    const conversationData = {
+    let conversationData = {
       title: messages[0].content,
       userId: user?.id,
       messages: messages,
     };
-    await fetch("api/addConversation", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(conversationData),
-    });
+    try {
+      const response = await fetch("api/addConversation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(conversationData),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+      const responseData = await response.json();
+      const { data } = responseData;
+      setConversations([...conversations, data]);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function getMessages(clickId: number) {
+    setIsNewConversation(false);
     const conversation = conversations.find((i) => i.id === clickId);
     if (conversation?.messages) {
       setMessages(conversation.messages);
@@ -100,12 +116,7 @@ export default function Chat() {
       <div className="w-1/6 flex flex-col bg-gray-50 h-screen fixed">
         <div className="h-20 flex items-center justify-between px-3">
           <h1>Streamscore</h1>
-          <button
-            onClick={() => {
-              setMessages([]);
-              setConversationId(null);
-            }}
-          >
+          <button onClick={startNewConversation}>
             <Image
               src="/startConversation.png"
               alt="start conversation"
@@ -114,17 +125,19 @@ export default function Chat() {
             />
           </button>
         </div>
-        <div className="flex-1 flex flex-col px-3 py-3 gap-2">
+        <div className="flex-1 flex flex-col px-3 py-3 gap-2 max-h-100vh overflow-y-auto">
           {isLoadingConversations && <p>Loading conversations...</p>}
-          {conversations.map((conversation) => (
-            <button
-              key={conversation.id}
-              className="flex flex-row items-start"
-              onClick={() => getMessages(conversation.id)}
-            >
-              {conversation.title}
-            </button>
-          ))}
+          {conversations
+            .sort((a, b) => b.id - a.id)
+            .map((conversation) => (
+              <button
+                key={conversation.id}
+                className="flex flex-row items-start hover:bg-gray-200"
+                onClick={() => getMessages(conversation.id)}
+              >
+                {conversation.title}
+              </button>
+            ))}
         </div>
         <div className="h-20 flex items-center px-3">
           <UserButton afterSignOutUrl="/" />
@@ -132,17 +145,17 @@ export default function Chat() {
         </div>
       </div>
       <div className="w-5/6 ml-auto">
-        <div className="py-10"></div>
-        {messages.length === 0 ? (
-          <div className="px-10 h-screen flex justify-center items-center">
+        <div className="py-10" />
+        {isNewConversation ? (
+          <div className="px-10 flex justify-center items-center">
             <div>
               <h1>Hello! How can I help you?</h1>
             </div>
           </div>
         ) : (
-          <div className="px-10 flex flex-col justify-center items-center">
+          <div className="px-10 flex flex-col overflow-y-auto hide-scrollbar">
             {messages.map((m) => (
-              <div className="pb-5 w-1/2 leading-7" key={m.id}>
+              <div className="pb-5 px-20 leading-7" key={m.id}>
                 {m.role === "user" ? "You: " : "Streamscore: "}
                 {m.content}
               </div>

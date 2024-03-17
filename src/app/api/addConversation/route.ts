@@ -4,9 +4,16 @@ import { InsertConversation, conversations } from "@/db/schema";
 export async function POST(req: Request) {
   try {
     const requestData: InsertConversation = await req.json();
-    await db.insert(conversations).values(requestData);
+    const result = await db
+      .insert(conversations)
+      .values(requestData)
+      .returning();
+    const insertedData = result[0];
     return new Response(
-      JSON.stringify({ message: "Conversation added successfully" }),
+      JSON.stringify({
+        message: "Conversation added successfully",
+        data: insertedData,
+      }),
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
