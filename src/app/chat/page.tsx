@@ -133,7 +133,7 @@ export default function Chat() {
               >
                 <span>
                   {conversation.title!.length > 25
-                    ? `${conversation.title?.slice(0, 25)}`
+                    ? `${conversation.title?.slice(0, 25)}...`
                     : conversation.title}
                 </span>
                 <div
