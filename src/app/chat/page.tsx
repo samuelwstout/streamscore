@@ -102,13 +102,9 @@ export default function Chat() {
       },
       body: JSON.stringify({ messages }),
     });
-
     if (!response.ok) {
       throw new Error("Failed to update conversation");
     }
-
-    // const updatedConversation = await response.json();
-    // console.log({ updatedConversation });
   }
 
   return (
@@ -130,13 +126,31 @@ export default function Chat() {
           {conversations
             .sort((a, b) => b.id - a.id)
             .map((conversation) => (
-              <button
+              <div
                 key={conversation.id}
-                className="flex flex-row items-center hover:bg-gray-200 overflow-hidden whitespace-nowrap leading-normal min-h-8 px-2 rounded"
+                className="flex flex-row items-center justify-between hover:bg-gray-200 overflow-hidden whitespace-nowrap leading-normal min-h-8 px-2 rounded cursor-pointer group"
                 onClick={() => getMessages(conversation.id)}
               >
-                {conversation.title}
-              </button>
+                <span>
+                  {conversation.title!.length > 25
+                    ? `${conversation.title?.slice(0, 25)}`
+                    : conversation.title}
+                </span>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // call a function to render a modal
+                  }}
+                  className="delete-btn hidden group-hover:flex z-10 bg-gray-200 p-1"
+                >
+                  <Image
+                    src="/ellipsis.png"
+                    alt="ellipsis"
+                    width={25}
+                    height={25}
+                  />
+                </div>
+              </div>
             ))}
         </div>
         <div className="h-20 flex items-center px-3">
