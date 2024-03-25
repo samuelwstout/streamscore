@@ -12,6 +12,9 @@ export default function Chat() {
   const [conversationId, setConversationId] = useState<null | number>(null);
   const [isLoadingConversations, setIsLoadingConversations] = useState(false);
   const [isNewConversation, setIsNewConversation] = useState(true);
+  const [openEditConvModal, setOpenEditConvoModal] = useState(false);
+  const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat({
       onFinish: () => setChatFinished(true),
@@ -107,6 +110,16 @@ export default function Chat() {
     }
   }
 
+  function handleEllipsisClick(e: any) {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    setModalPosition({
+      top: rect.bottom + window.scrollY,
+      left: rect.left + window.scrollX,
+    });
+    setOpenEditConvoModal(!openEditConvModal);
+  }
+
   return (
     <main className="h-full">
       <div className="w-1/6 flex flex-col bg-gray-50 h-screen fixed">
@@ -137,10 +150,7 @@ export default function Chat() {
                     : conversation.title}
                 </span>
                 <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // call a function to render a modal
-                  }}
+                  onClick={handleEllipsisClick}
                   className="delete-btn hidden group-hover:flex z-10 bg-gray-200 p-1"
                 >
                   <Image
@@ -153,6 +163,17 @@ export default function Chat() {
               </div>
             ))}
         </div>
+        {openEditConvModal && (
+          <div
+            style={{
+              top: `${modalPosition.top}px`,
+              left: `${modalPosition.left}px`,
+            }}
+            className="border-2 border-blue-500 absolute z-10"
+          >
+            <p>Delete Conversation?</p>
+          </div>
+        )}
         <div className="h-20 flex items-center px-3">
           <UserButton afterSignOutUrl="/" />
           {user && <p className="text-sm pl-2">{user.fullName}</p>}
