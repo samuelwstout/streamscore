@@ -189,9 +189,17 @@ export default function Chat() {
               top: `${modalPosition.top}px`,
               left: `${modalPosition.left}px`,
             }}
-            className="modal-delete-conversation absolute z-10 bg-white rounded-lg shadow-lg overflow-hidden p-3"
+            className="modal-delete-conversation absolute z-10 bg-white rounded-lg shadow-lg p-3 w-4/5 flex justify-center items-center hover:bg-gray-100 cursor-pointer"
           >
-            <p>Delete Conversation?</p>
+            <div className="flex flex-row items-center gap-1 ">
+              <Image
+                src="/trashcan.png"
+                alt="trash can"
+                width={25}
+                height={25}
+              />
+              <p>Delete Conversation?</p>
+            </div>
           </div>
         )}
         <div className="h-20 flex items-center px-3">
