@@ -12,8 +12,8 @@ export default function Chat() {
   const [conversationId, setConversationId] = useState<null | number>(null);
   const [isLoadingConversations, setIsLoadingConversations] = useState(false);
   const [isNewConversation, setIsNewConversation] = useState(true);
-  const [openEditConvModal, setOpenEditConvoModal] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+  const [activeModalId, setActiveModalId] = useState<null | number>(null);
 
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat({
@@ -33,6 +33,21 @@ export default function Chat() {
       updateConversation();
     }
   }, [chatFinished, messages]);
+
+  useEffect(() => {
+    function handleClickOutside(event: any) {
+      const modal = document.querySelector(".modal-delete-conversation");
+      if (modal && !modal.contains(event.target) && activeModalId !== null) {
+        setActiveModalId(null);
+      }
+    }
+    if (activeModalId !== null) {
+      document.addEventListener("click", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [activeModalId]);
 
   function startNewConversation() {
     setMessages([]);
@@ -110,15 +125,20 @@ export default function Chat() {
     }
   }
 
-  function handleEllipsisClick(e: any) {
+  const handleEllipsisClick = (conversationId: number) => (e: any) => {
     e.stopPropagation();
     const rect = e.currentTarget.getBoundingClientRect();
     setModalPosition({
       top: rect.bottom + window.scrollY,
       left: rect.left + window.scrollX,
     });
-    setOpenEditConvoModal(!openEditConvModal);
-  }
+
+    if (activeModalId === conversationId) {
+      setActiveModalId(null);
+    } else {
+      setActiveModalId(conversationId);
+    }
+  };
 
   return (
     <main className="h-full">
@@ -150,7 +170,7 @@ export default function Chat() {
                     : conversation.title}
                 </span>
                 <div
-                  onClick={handleEllipsisClick}
+                  onClick={handleEllipsisClick(conversation.id)}
                   className="delete-btn hidden group-hover:flex z-10 bg-gray-200 p-1"
                 >
                   <Image
@@ -163,13 +183,13 @@ export default function Chat() {
               </div>
             ))}
         </div>
-        {openEditConvModal && (
+        {activeModalId !== null && (
           <div
             style={{
               top: `${modalPosition.top}px`,
               left: `${modalPosition.left}px`,
             }}
-            className="border-2 border-blue-500 absolute z-10"
+            className="modal-delete-conversation absolute z-10 bg-white rounded-lg shadow-lg overflow-hidden p-3"
           >
             <p>Delete Conversation?</p>
           </div>
