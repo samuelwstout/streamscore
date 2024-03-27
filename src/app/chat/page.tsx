@@ -14,6 +14,7 @@ export default function Chat() {
   const [isNewConversation, setIsNewConversation] = useState(true);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [activeModalId, setActiveModalId] = useState<null | number>(null);
+  const [isCenterModalOpen, setIsCenterModalOpen] = useState(false);
 
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat({
@@ -142,6 +143,36 @@ export default function Chat() {
 
   return (
     <main className="h-full">
+      {isCenterModalOpen && (
+        <div>
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              zIndex: 10,
+            }}
+            onClick={() => setIsCenterModalOpen(false)}
+          />
+          <div
+            style={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 20,
+            }}
+            className="bg-white p-3"
+          >
+            <button onClick={() => setIsCenterModalOpen(false)}>
+              Close Modal
+            </button>
+          </div>
+        </div>
+      )}
       <div className="w-1/6 flex flex-col bg-gray-50 h-screen fixed">
         <div className="h-20 flex items-center justify-between px-3">
           <h1>Streamscore</h1>
@@ -190,8 +221,9 @@ export default function Chat() {
               left: `${modalPosition.left}px`,
             }}
             className="modal-delete-conversation absolute z-10 bg-white rounded-lg shadow-lg p-3 w-4/5 flex justify-center items-center hover:bg-gray-100 cursor-pointer"
+            onClick={() => setIsCenterModalOpen(true)}
           >
-            <div className="flex flex-row items-center gap-1 ">
+            <div className="flex flex-row items-center gap-1">
               <Image
                 src="/trashcan.png"
                 alt="trash can"
