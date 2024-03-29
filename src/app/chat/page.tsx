@@ -5,6 +5,14 @@ import Image from "next/image";
 import { autoResize } from "@/utils/autoResizeInput";
 import { useEffect, useState } from "react";
 import type { SelectConversation } from "@/db/schema";
+import { Message } from "ai";
+
+interface ClickedConvProps {
+  id: number;
+  userId: string | null;
+  title: string | null;
+  messages: Message[] | null;
+}
 
 export default function Chat() {
   const [chatFinished, setChatFinished] = useState(false);
@@ -15,6 +23,7 @@ export default function Chat() {
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [activeModalId, setActiveModalId] = useState<null | number>(null);
   const [isCenterModalOpen, setIsCenterModalOpen] = useState(false);
+  const [clickedConv, setClickedConv] = useState<null | ClickedConvProps>(null);
 
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat({
@@ -126,24 +135,24 @@ export default function Chat() {
     }
   }
 
-  const handleEllipsisClick = (conversationId: number) => (e: any) => {
+  const handleEllipsisClick = (conversation: any) => (e: any) => {
     e.stopPropagation();
     const rect = e.currentTarget.getBoundingClientRect();
     setModalPosition({
       top: rect.bottom + window.scrollY,
       left: rect.left + window.scrollX,
     });
-
-    if (activeModalId === conversationId) {
+    if (activeModalId === conversation.id) {
       setActiveModalId(null);
     } else {
-      setActiveModalId(conversationId);
+      setActiveModalId(conversation.id);
     }
+    setClickedConv(conversation);
   };
 
   return (
     <main className="h-full">
-      {isCenterModalOpen && (
+      {isCenterModalOpen && clickedConv && (
         <div>
           <div
             style={{
@@ -167,6 +176,7 @@ export default function Chat() {
             }}
             className="bg-white p-3"
           >
+            <p>{clickedConv.title}</p>
             <button onClick={() => setIsCenterModalOpen(false)}>
               Close Modal
             </button>
@@ -201,7 +211,7 @@ export default function Chat() {
                     : conversation.title}
                 </span>
                 <div
-                  onClick={handleEllipsisClick(conversation.id)}
+                  onClick={handleEllipsisClick(conversation)}
                   className="delete-btn hidden group-hover:flex z-10 bg-gray-200 p-1"
                 >
                   <Image
