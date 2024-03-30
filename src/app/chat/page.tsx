@@ -174,12 +174,35 @@ export default function Chat() {
               transform: "translate(-50%, -50%)",
               zIndex: 20,
             }}
-            className="bg-white p-3"
+            className="bg-white w-1/4 rounded shadow"
           >
-            <p>{clickedConv.title}</p>
-            <button onClick={() => setIsCenterModalOpen(false)}>
-              Close Modal
-            </button>
+            <div className="py-5 pl-2 border-b border-gray-300 font-medium">
+              <p>Delete Chat?</p>
+            </div>
+            <div className="pl-2 py-5">
+              <p>
+                This will delete{" "}
+                <span className="font-semibold">
+                  {clickedConv.title!.length > 30
+                    ? `${clickedConv.title?.slice(0, 30)}...`
+                    : clickedConv.title}
+                </span>
+              </p>
+            </div>
+            <div className="flex flex-row justify-end gap-1 py-5 pr-2">
+              <button
+                className="border border-gray-300 p-2 rounded text-sm"
+                onClick={() => setIsCenterModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-red-600 p-2 rounded text-sm text-white"
+                onClick={() => setIsCenterModalOpen(false)}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -230,17 +253,17 @@ export default function Chat() {
               top: `${modalPosition.top}px`,
               left: `${modalPosition.left}px`,
             }}
-            className="modal-delete-conversation absolute z-10 bg-white rounded-lg shadow-lg p-3 w-4/5 flex justify-center items-center hover:bg-gray-100 cursor-pointer"
+            className="modal-delete-conversation absolute z-10 bg-white rounded-lg shadow-lg p-3 w-3/5 flex items-center hover:bg-gray-100 cursor-pointer"
             onClick={() => setIsCenterModalOpen(true)}
           >
             <div className="flex flex-row items-center gap-1">
               <Image
                 src="/trashcan.png"
                 alt="trash can"
-                width={25}
-                height={25}
+                width={20}
+                height={20}
               />
-              <p>Delete Conversation?</p>
+              <p className="text-sm">Delete Chat?</p>
             </div>
           </div>
         )}
