@@ -135,12 +135,21 @@ export default function Chat() {
     }
   }
 
-  async function deleteConversation(clickedConv: any) {
+  async function deleteConversation(clickedConv: ClickedConvProps) {
     setIsCenterModalOpen(false);
     const updatedConversations = conversations.filter(
       (i) => i.id !== clickedConv.id
     );
     setConversations(updatedConversations);
+    const response = await fetch(`api/deleteConversation/${clickedConv.id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to delete conversation.");
+    }
   }
 
   const handleEllipsisClick = (conversation: any) => (e: any) => {
