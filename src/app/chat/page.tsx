@@ -179,7 +179,7 @@ export default function Chat() {
               width: "100vw",
               height: "100vh",
               backgroundColor: "rgba(0, 0, 0, 0.5)",
-              zIndex: 10,
+              zIndex: 20,
             }}
             onClick={() => setIsCenterModalOpen(false)}
           />
@@ -223,6 +223,21 @@ export default function Chat() {
           </div>
         </div>
       )}
+      {activeModalId !== null && (
+        <div
+          style={{
+            top: `${modalPosition.top}px`,
+            left: `${modalPosition.left}px`,
+          }}
+          className="modal-delete-conversation absolute z-10 bg-white rounded-lg shadow-lg p-3 flex items-center hover:bg-gray-100 cursor-pointer"
+          onClick={() => setIsCenterModalOpen(true)}
+        >
+          <div className="flex flex-row items-center gap-1">
+            <Image src="/trashcan.png" alt="trash can" width={20} height={20} />
+            <p className="text-sm">Delete Chat?</p>
+          </div>
+        </div>
+      )}
       <div className="w-1/6 flex flex-col bg-gray-50 h-screen fixed">
         <div className="h-20 flex items-center justify-between px-3">
           <h1>Streamscore</h1>
@@ -235,7 +250,7 @@ export default function Chat() {
             />
           </button>
         </div>
-        <div className="flex-1 flex flex-col px-3 py-3 gap-2 max-h-100vh overflow-y-auto">
+        <div className="flex-1 flex flex-col px-3 gap-2 max-h-100vh overflow-y-auto">
           {isLoadingConversations && <p>Loading conversations...</p>}
           {conversations
             .sort((a, b) => b.id - a.id)
@@ -264,26 +279,6 @@ export default function Chat() {
               </div>
             ))}
         </div>
-        {activeModalId !== null && (
-          <div
-            style={{
-              top: `${modalPosition.top}px`,
-              left: `${modalPosition.left}px`,
-            }}
-            className="modal-delete-conversation absolute z-10 bg-white rounded-lg shadow-lg p-3 w-3/5 flex items-center hover:bg-gray-100 cursor-pointer"
-            onClick={() => setIsCenterModalOpen(true)}
-          >
-            <div className="flex flex-row items-center gap-1">
-              <Image
-                src="/trashcan.png"
-                alt="trash can"
-                width={20}
-                height={20}
-              />
-              <p className="text-sm">Delete Chat?</p>
-            </div>
-          </div>
-        )}
         <div className="h-20 flex items-center px-3">
           <UserButton afterSignOutUrl="/" />
           {user && <p className="text-sm pl-2">{user.fullName}</p>}
