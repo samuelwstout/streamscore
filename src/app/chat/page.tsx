@@ -135,6 +135,14 @@ export default function Chat() {
     }
   }
 
+  async function deleteConversation(clickedConv: any) {
+    setIsCenterModalOpen(false);
+    const updatedConversations = conversations.filter(
+      (i) => i.id !== clickedConv.id
+    );
+    setConversations(updatedConversations);
+  }
+
   const handleEllipsisClick = (conversation: any) => (e: any) => {
     e.stopPropagation();
     const rect = e.currentTarget.getBoundingClientRect();
@@ -198,7 +206,7 @@ export default function Chat() {
               </button>
               <button
                 className="bg-red-600 p-2 rounded text-sm text-white"
-                onClick={() => setIsCenterModalOpen(false)}
+                onClick={() => deleteConversation(clickedConv)}
               >
                 Delete
               </button>
