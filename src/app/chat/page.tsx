@@ -149,6 +149,8 @@ export default function Chat() {
     });
     if (!response.ok) {
       throw new Error("Failed to delete conversation.");
+    } else {
+      startNewConversation();
     }
   }
 
