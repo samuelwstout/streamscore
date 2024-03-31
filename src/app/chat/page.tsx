@@ -257,17 +257,17 @@ export default function Chat() {
             .map((conversation) => (
               <div
                 key={conversation.id}
-                className="flex flex-row items-center justify-between hover:bg-gray-200 overflow-hidden whitespace-nowrap leading-normal min-h-8 px-2 rounded cursor-pointer group"
+                className="flex flex-row items-center justify-between hover:bg-gray-200 overflow-hidden whitespace-nowrap leading-normal min-h-8 rounded cursor-pointer group"
                 onClick={() => getMessages(conversation.id)}
               >
-                <span>
+                <span className="flex-1">
                   {conversation.title!.length > 25
                     ? `${conversation.title?.slice(0, 25)}...`
                     : conversation.title}
                 </span>
                 <div
                   onClick={handleEllipsisClick(conversation)}
-                  className="delete-btn hidden group-hover:flex z-10 bg-gray-200 p-1"
+                  className="delete-btn hidden group-hover:flex z-10 bg-gray-200 p-1 flex-2"
                 >
                   <Image
                     src="/ellipsis.png"
