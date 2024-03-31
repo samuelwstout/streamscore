@@ -259,7 +259,7 @@ export default function Chat() {
             .map((conversation) => (
               <div
                 key={conversation.id}
-                className="flex flex-row items-center justify-between hover:bg-gray-200 overflow-hidden whitespace-nowrap leading-normal min-h-8 rounded cursor-pointer group"
+                className="flex flex-row items-center justify-between hover:bg-gray-200 overflow-hidden whitespace-nowrap leading-normal min-h-10 rounded cursor-pointer group"
                 onClick={() => getMessages(conversation.id)}
               >
                 <span className="flex-1">
