@@ -5,7 +5,7 @@ export default function Main() {
     <main className="h-screen">
       <h1>Landing page</h1>
       <Link className="border-2 border-black p-1" href="/chat">
-        Chat
+        Sign in
       </Link>
     </main>
   );
