@@ -36,13 +36,23 @@ export default function Chat() {
   }, []);
 
   useEffect(() => {
-    if (chatFinished && isNewConversation) {
-      addConversation();
-      setChatFinished(false);
-    } else if (chatFinished && !isNewConversation) {
-      updateConversation();
-    }
-  }, [chatFinished, messages]);
+    const handleChatCompletion = async () => {
+      if (chatFinished) {
+        if (isNewConversation) {
+          const newConversationId = await addConversation();
+          if (newConversationId) {
+            setConversationId(newConversationId);
+            setIsNewConversation(false);
+          }
+        } else {
+          await updateConversation();
+        }
+        setChatFinished(false);
+      }
+    };
+
+    handleChatCompletion();
+  }, [chatFinished, isNewConversation]);
 
   useEffect(() => {
     function handleClickOutside(event: any) {
@@ -80,6 +90,8 @@ export default function Chat() {
   }
 
   async function addConversation() {
+    if (messages.length === 0) return;
+
     let conversationData = {
       title: messages[0].content,
       userId: user?.id,
@@ -99,6 +111,7 @@ export default function Chat() {
       const responseData = await response.json();
       const { data } = responseData;
       setConversations([...conversations, data]);
+      return data.id;
     } catch (error) {
       console.error(error);
     }
@@ -288,7 +301,7 @@ export default function Chat() {
       </div>
       <div className="w-5/6 ml-auto">
         <div className="py-10" />
-        {isNewConversation ? (
+        {!messages.length ? (
           <div className="px-10 flex justify-center items-center">
             <div>
               <h1>Hello! How can I help you?</h1>
@@ -306,7 +319,9 @@ export default function Chat() {
         )}
         <div className="py-12"></div>
         <form
-          onSubmit={handleSubmit}
+          onSubmit={(e) => {
+            handleSubmit(e as any);
+          }}
           className="flex justify-center fixed bottom-0 w-5/6 py-4 bg-white"
         >
           <div className="relative w-1/2">
