@@ -24,6 +24,7 @@ export default function Chat() {
   const [activeModalId, setActiveModalId] = useState<null | number>(null);
   const [isCenterModalOpen, setIsCenterModalOpen] = useState(false);
   const [clickedConv, setClickedConv] = useState<null | ClickedConvProps>(null);
+  const [sidebar, setSidebar] = useState<"open" | "closed">("open");
 
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat({
@@ -184,6 +185,7 @@ export default function Chat() {
 
   return (
     <main className="h-full">
+      {/* Delete Chat modal */}
       {isCenterModalOpen && clickedConv && (
         <div>
           <div
@@ -238,6 +240,8 @@ export default function Chat() {
           </div>
         </div>
       )}
+
+      {/* Picked conv modal */}
       {activeModalId !== null && (
         <div
           style={{
@@ -253,53 +257,94 @@ export default function Chat() {
           </div>
         </div>
       )}
-      <div className="w-1/6 flex flex-col bg-gray-50 h-screen fixed">
-        <div className="h-20 flex items-center justify-between px-3">
-          <h1>Streamscore</h1>
-          <button onClick={startNewConversation}>
+
+      {/* Sidebar */}
+      {sidebar === "closed" ? (
+        <div className={`flex flex-col h-screen fixed`}>
+          <div className="h-20 flex pl-3">
+            <button onClick={startNewConversation}>
+              <Image
+                src="/startConversation.png"
+                alt="start conversation"
+                width={25}
+                height={25}
+              />
+            </button>
+          </div>
+          <button
+            onClick={() => setSidebar("open")}
+            className="fixed top-100 pl-3"
+          >
             <Image
-              src="/startConversation.png"
-              alt="start conversation"
-              width={25}
-              height={25}
+              src="/openSidebar.png"
+              alt="open sidebar"
+              width={22}
+              height={22}
             />
           </button>
         </div>
-        <div className="flex-1 flex flex-col px-3 gap-2 max-h-100vh overflow-y-auto">
-          {isLoadingConversations && <p>Loading conversations...</p>}
-          {conversations
-            .sort((a, b) => b.id - a.id)
-            .map((conversation) => (
-              <div
-                key={conversation.id}
-                className="flex flex-row items-center justify-between hover:bg-gray-200 overflow-hidden whitespace-nowrap leading-normal min-h-10 rounded cursor-pointer group"
-                onClick={() => getMessages(conversation.id)}
-              >
-                <span className="flex-1">
-                  {conversation.title!.length > 25
-                    ? `${conversation.title?.slice(0, 25)}...`
-                    : conversation.title}
-                </span>
+      ) : (
+        <div className="w-72 flex flex-col bg-gray-50 h-screen fixed">
+          <div className="h-20 flex items-center justify-between px-3">
+            <h1>Streamscore</h1>
+            <button onClick={startNewConversation}>
+              <Image
+                src="/startConversation.png"
+                alt="start conversation"
+                width={25}
+                height={25}
+              />
+            </button>
+          </div>
+          <div className="flex-1 flex flex-col px-3 gap-2 max-h-100vh overflow-y-auto">
+            {isLoadingConversations && <p>Loading conversations...</p>}
+            {conversations
+              .sort((a, b) => b.id - a.id)
+              .map((conversation) => (
                 <div
-                  onClick={handleEllipsisClick(conversation)}
-                  className="delete-btn hidden group-hover:flex z-10 bg-gray-200 p-1 flex-2"
+                  key={conversation.id}
+                  className="flex flex-row items-center justify-between hover:bg-gray-200 overflow-hidden whitespace-nowrap leading-normal min-h-10 rounded cursor-pointer group"
+                  onClick={() => getMessages(conversation.id)}
                 >
-                  <Image
-                    src="/ellipsis.png"
-                    alt="ellipsis"
-                    width={25}
-                    height={25}
-                  />
+                  <span className="flex-1">
+                    {conversation.title!.length > 25
+                      ? `${conversation.title?.slice(0, 25)}...`
+                      : conversation.title}
+                  </span>
+                  <div
+                    onClick={handleEllipsisClick(conversation)}
+                    className="delete-btn hidden group-hover:flex z-10 bg-gray-200 p-1 flex-2"
+                  >
+                    <Image
+                      src="/ellipsis.png"
+                      alt="ellipsis"
+                      width={25}
+                      height={25}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+          </div>
+          <div className="h-20 flex items-center px-3">
+            <UserButton afterSignOutUrl="/" />
+            {user && <p className="text-sm pl-2">{user.fullName}</p>}
+          </div>
+          <button
+            onClick={() => setSidebar("closed")}
+            className="fixed top-100 left-74"
+          >
+            <Image
+              src="/closeSidebar.png"
+              alt="close sidebar"
+              width={22}
+              height={22}
+            />
+          </button>
         </div>
-        <div className="h-20 flex items-center px-3">
-          <UserButton afterSignOutUrl="/" />
-          {user && <p className="text-sm pl-2">{user.fullName}</p>}
-        </div>
-      </div>
-      <div className="w-5/6 ml-auto">
+      )}
+
+      {/* Messages/Intro message */}
+      <div className={`${sidebar === "closed" ? "w-full" : "w-5/6"} ml-auto`}>
         <div className="py-10" />
         {!messages.length ? (
           <div className="px-10 flex justify-center items-center">
@@ -317,12 +362,16 @@ export default function Chat() {
             ))}
           </div>
         )}
-        <div className="py-12"></div>
+
+        {/* Extra space for styling purposes */}
+        <div className="py-12" />
+
+        {/* Input  */}
         <form
           onSubmit={(e) => {
             handleSubmit(e as any);
           }}
-          className="flex justify-center fixed bottom-0 w-5/6 py-4 bg-white"
+          className="flex justify-center fixed bottom-0 py-4 w-full bg-white"
         >
           <div className="relative w-1/2">
             <textarea
