@@ -371,7 +371,9 @@ export default function Chat() {
           onSubmit={(e) => {
             handleSubmit(e as any);
           }}
-          className="flex justify-center fixed bottom-0 py-4 w-full bg-white"
+          className={`${
+            sidebar === "closed" ? "w-full" : "w-5/6"
+          } flex justify-center fixed bottom-0 py-4 bg-white`}
         >
           <div className="relative w-1/2">
             <textarea
