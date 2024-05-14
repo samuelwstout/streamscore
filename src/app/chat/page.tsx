@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -12,15 +12,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { UserButton, useUser } from "@clerk/nextjs";
-
-const navigation = [
-  { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
-  { name: "Team", href: "#", icon: UsersIcon, current: false },
-  { name: "Projects", href: "#", icon: FolderIcon, current: false },
-  { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
-  { name: "Documents", href: "#", icon: DocumentDuplicateIcon, current: false },
-  { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
-];
+import type { SelectConversation } from "@/db/schema";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -29,6 +21,26 @@ function classNames(...classes: any[]) {
 export default function Chat() {
   const { user } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [conversations, setConversations] = useState<SelectConversation[]>([]);
+  const [isLoadingConversations, setIsLoadingConversations] = useState(false);
+
+  useEffect(() => {
+    getConversations();
+  }, []);
+
+  async function getConversations() {
+    setIsLoadingConversations(true);
+    try {
+      const response = await fetch("api/getConversations");
+      if (!response.ok) throw new Error("Failed to fetch conversations");
+      const data = await response.json();
+      setConversations(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoadingConversations(false);
+    }
+  }
 
   return (
     <>
@@ -102,31 +114,26 @@ export default function Chat() {
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
                         <li>
                           <ul role="list" className="-mx-2 space-y-1">
-                            {navigation.map((item) => (
-                              <li key={item.name}>
-                                <a
-                                  href={item.href}
-                                  className={classNames(
-                                    item.current
-                                      ? "bg-gray-800 text-white"
-                                      : "text-gray-400 hover:text-white hover:bg-gray-800",
-                                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                  )}
-                                >
-                                  <item.icon
-                                    className="h-6 w-6 shrink-0"
-                                    aria-hidden="true"
-                                  />
-                                  {item.name}
-                                </a>
-                              </li>
-                            ))}
+                            {isLoadingConversations && (
+                              <div className="text-sm text-white leading-6 font-semibold">
+                                Loading conversations...
+                              </div>
+                            )}
+                            {conversations
+                              .sort((a, b) => b.id - a.id)
+                              .map((item) => (
+                                <li key={item.id}>
+                                  <div
+                                    className={classNames(
+                                      "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",
+                                      "text-gray-400 hover:text-white hover:bg-gray-800"
+                                    )}
+                                  >
+                                    {item.title}
+                                  </div>
+                                </li>
+                              ))}
                           </ul>
-                        </li>
-                        <li>
-                          <div className="text-xs font-semibold leading-6 text-gray-400">
-                            Your teams
-                          </div>
                         </li>
                       </ul>
                     </nav>
@@ -152,21 +159,25 @@ export default function Chat() {
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
                   <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => (
-                      <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className={classNames(
-                            item.current
-                              ? "bg-gray-800 text-white"
-                              : "text-gray-400 hover:text-white hover:bg-gray-800",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
-                        >
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
+                    {isLoadingConversations && (
+                      <div className="text-sm text-white leading-6 font-semibold">
+                        Loading conversations...
+                      </div>
+                    )}
+                    {conversations
+                      .sort((a, b) => b.id - a.id)
+                      .map((item) => (
+                        <li key={item.id}>
+                          <div
+                            className={classNames(
+                              "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",
+                              "text-gray-400 hover:text-white hover:bg-gray-800"
+                            )}
+                          >
+                            {item.title}
+                          </div>
+                        </li>
+                      ))}
                   </ul>
                 </li>
                 <li className="-mx-6 mt-auto">
