@@ -180,7 +180,7 @@ export default function Chat() {
                       ))}
                   </ul>
                 </li>
-                <li className="-mx-6 mt-auto">
+                <li className="sticky bottom-0 -mx-6 mt-auto bg-gray-900">
                   <div className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white">
                     <UserButton afterSignOutUrl="/" />
                     <span className="sr-only">Your profile</span>
@@ -192,7 +192,7 @@ export default function Chat() {
           </div>
         </div>
 
-        <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-gray-900 px-4 py-4 shadow-sm sm:px-6 lg:hidden">
+        <div className="sticky top-0 z-40 flex items-center justify-between gap-x-6 bg-gray-900 px-4 py-4 shadow-sm sm:px-6 lg:hidden">
           <button
             type="button"
             className="-m-2.5 p-2.5 text-gray-400 lg:hidden"
@@ -201,9 +201,6 @@ export default function Chat() {
             <span className="sr-only">Open sidebar</span>
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
-          <div className="flex-1 text-sm font-semibold leading-6 text-white">
-            Dashboard
-          </div>
           <UserButton afterSignOutUrl="/" />
           <span className="sr-only">Your profile</span>
         </div>
