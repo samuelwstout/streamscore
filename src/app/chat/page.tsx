@@ -5,20 +5,41 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { UserButton, useUser } from "@clerk/nextjs";
 import type { SelectConversation } from "@/db/schema";
+import { autoResize } from "@/utils/autoResizeInput";
+import { useChat } from "ai/react";
+import Image from "next/image";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Chat() {
-  const { user } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [conversations, setConversations] = useState<SelectConversation[]>([]);
   const [isLoadingConversations, setIsLoadingConversations] = useState(false);
+  const [isNewConversation, setIsNewConversation] = useState(true);
+  const [chatFinished, setChatFinished] = useState(false);
+  const [conversationId, setConversationId] = useState<null | number>(null);
+
+  const { user } = useUser();
+
+  const { messages, input, handleInputChange, handleSubmit, setMessages } =
+    useChat({
+      onFinish: () => setChatFinished(true),
+    });
 
   useEffect(() => {
     getConversations();
   }, []);
+
+  useEffect(() => {
+    if (chatFinished && isNewConversation) {
+      addConversation();
+      setChatFinished(false);
+    } else if (chatFinished && !isNewConversation) {
+      updateConversation();
+    }
+  }, [chatFinished, messages]);
 
   async function getConversations() {
     setIsLoadingConversations(true);
@@ -32,6 +53,70 @@ export default function Chat() {
     } finally {
       setIsLoadingConversations(false);
     }
+  }
+
+  async function addConversation() {
+    let conversationData = {
+      title: messages.length > 0 ? messages[0].content : "",
+      userId: user?.id,
+      messages: messages,
+    };
+    try {
+      const response = await fetch("api/addConversation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(conversationData),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch");
+      }
+      const responseData = await response.json();
+      const { data } = responseData;
+      setConversations([...conversations, data]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function updateConversation() {
+    const updatedConversations = conversations.map((conv) => {
+      if (conv.id === conversationId) {
+        return { ...conv, messages: messages };
+      }
+      return conv;
+    });
+    setConversations(updatedConversations);
+    const response = await fetch(`api/updateConversation/${conversationId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ messages }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to update conversation");
+    }
+  }
+
+  function getMessages(clickId: number) {
+    setSidebarOpen(false);
+    setIsNewConversation(false);
+    const conversation = conversations.find((i) => i.id === clickId);
+    if (conversation?.messages) {
+      setMessages(conversation.messages);
+    } else {
+      console.error("Can't find conversation");
+    }
+    setConversationId(clickId);
+  }
+
+  function startNewConversation() {
+    setMessages([]);
+    setConversationId(null);
+    setIsNewConversation(true);
+    setSidebarOpen(false);
   }
 
   return (
@@ -95,12 +180,20 @@ export default function Chat() {
                   </Transition.Child>
                   {/* Sidebar component, swap this element with another sidebar if you like */}
                   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-2 ring-1 ring-white/10">
-                    <div className="flex h-16 shrink-0 items-center">
+                    <div className="flex h-16 shrink-0 items-center justify-between">
                       <img
                         className="h-8 w-auto"
                         src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                        alt="Your Company"
+                        alt="Streamscore"
                       />
+                      <button onClick={startNewConversation}>
+                        <Image
+                          src="/startConversation.png"
+                          alt="start conversation"
+                          width={25}
+                          height={25}
+                        />
+                      </button>
                     </div>
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -116,6 +209,7 @@ export default function Chat() {
                               .map((item) => (
                                 <li
                                   key={item.id}
+                                  onClick={() => getMessages(item.id)}
                                   className="flex items-center justify-between gap-x-3 py-3 hover:bg-gray-800 rounded-md group cursor-pointer"
                                 >
                                   <div className="group-hover:text-white group flex text-sm leading-6 font-semibold truncate text-gray-400 px-2">
@@ -176,12 +270,20 @@ export default function Chat() {
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900">
-            <div className="flex h-16 shrink-0 items-center sticky top-0 bg-gray-900 z-10 px-6">
+            <div className="flex h-16 shrink-0 items-center justify-between sticky top-0 bg-gray-900 z-10 px-6">
               <img
                 className="h-8 w-auto"
                 src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
                 alt="StreamScore"
               />
+              <button onClick={startNewConversation}>
+                <Image
+                  src="/startConversation.png"
+                  alt="start conversation"
+                  width={25}
+                  height={25}
+                />
+              </button>
             </div>
             <nav className="flex flex-1 flex-col px-6">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -197,6 +299,7 @@ export default function Chat() {
                       .map((item) => (
                         <li
                           key={item.id}
+                          onClick={() => getMessages(item.id)}
                           className="flex items-center justify-between gap-x-3 py-3 hover:bg-gray-800 rounded-md group cursor-pointer"
                         >
                           <div className="group-hover:text-white group flex text-sm leading-6 font-semibold truncate text-gray-400 px-2">
@@ -267,7 +370,62 @@ export default function Chat() {
         </div>
 
         <main className="py-10 lg:pl-72">
-          <div className="px-4 sm:px-6 lg:px-8">{/* Your content */}</div>
+          <div className="px-4 sm:px-6 lg:px-8">
+            <div>
+              <div className="py-10" />
+              {isNewConversation ? (
+                <div className="px-10 flex justify-center items-center">
+                  <div>
+                    <h1>Hello! How can I help you?</h1>
+                  </div>
+                </div>
+              ) : (
+                <div className="px-10 flex flex-col overflow-y-auto hide-scrollbar">
+                  {messages.map((m) => (
+                    <div className="pb-5 px-20 leading-7" key={m.id}>
+                      {m.role === "user" ? "You: " : "Streamscore: "}
+                      {m.content}
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="py-12"></div>
+              <form
+                onSubmit={handleSubmit}
+                className="flex justify-center fixed bottom-0 w-full py-4 bg-white"
+              >
+                <div className="relative w-1/2">
+                  <textarea
+                    value={input}
+                    className="w-full pl-2 py-1 border-2 border-gray-300 rounded-md focus:outline-none overflow-y-hidden min-h-16 resize-none"
+                    placeholder="Type your message here..."
+                    onChange={handleInputChange}
+                    onInput={autoResize}
+                    rows={1}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSubmit(e as any);
+                      }
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    className={`absolute right-2.5 bottom-4 rounded-md ${
+                      input.length > 0 ? "bg-black" : "bg-slate-200"
+                    } p-1`}
+                  >
+                    <Image
+                      src="/arrow.png"
+                      alt="arrow"
+                      width={25}
+                      height={25}
+                    />
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </main>
       </div>
     </>
