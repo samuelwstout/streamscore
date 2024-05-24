@@ -369,64 +369,55 @@ export default function Chat() {
           <span className="sr-only">Your profile</span>
         </div>
 
-        <main className="py-10 lg:pl-72">
-          <div className="px-4 sm:px-6 lg:px-8">
-            <div>
-              <div className="py-10" />
-              {isNewConversation ? (
-                <div className="px-10 flex justify-center items-center">
-                  <div>
-                    <h1>Hello! How can I help you?</h1>
+        <div className="lg:ml-72 min-h-screen flex flex-col border border-blue-500">
+          <div className="flex-grow">
+            {isNewConversation ? (
+              <div className="flex justify-center items-center">
+                <div>
+                  <h1>Hello! How can I help you?</h1>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col overflow-y-auto hide-scrollbar">
+                {messages.map((m) => (
+                  <div className="pb-5 px-2 leading-7" key={m.id}>
+                    {m.role === "user" ? "You: " : "Streamscore: "}
+                    {m.content}
                   </div>
-                </div>
-              ) : (
-                <div className="px-10 flex flex-col overflow-y-auto hide-scrollbar">
-                  {messages.map((m) => (
-                    <div className="pb-5 px-20 leading-7" key={m.id}>
-                      {m.role === "user" ? "You: " : "Streamscore: "}
-                      {m.content}
-                    </div>
-                  ))}
-                </div>
-              )}
-              <div className="py-12"></div>
-              <form
-                onSubmit={handleSubmit}
-                className="flex justify-center fixed bottom-0 w-full py-4 bg-white"
-              >
-                <div className="relative w-1/2">
-                  <textarea
-                    value={input}
-                    className="w-full pl-2 py-1 border-2 border-gray-300 rounded-md focus:outline-none overflow-y-hidden min-h-16 resize-none"
-                    placeholder="Type your message here..."
-                    onChange={handleInputChange}
-                    onInput={autoResize}
-                    rows={1}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSubmit(e as any);
-                      }
-                    }}
-                  />
-                  <button
-                    type="submit"
-                    className={`absolute right-2.5 bottom-4 rounded-md ${
-                      input.length > 0 ? "bg-black" : "bg-slate-200"
-                    } p-1`}
-                  >
-                    <Image
-                      src="/arrow.png"
-                      alt="arrow"
-                      width={25}
-                      height={25}
-                    />
-                  </button>
-                </div>
-              </form>
-            </div>
+                ))}
+              </div>
+            )}
           </div>
-        </main>
+          <form
+            onSubmit={handleSubmit}
+            className="flex justify-center w-full sticky bottom-0 py-4 bg-white"
+          >
+            <div className="relative w-1/2">
+              <textarea
+                value={input}
+                className="w-full pl-2 py-1 border-2 border-gray-300 rounded-md focus:outline-none overflow-y-hidden min-h-16 resize-none"
+                placeholder="Type your message here..."
+                onChange={handleInputChange}
+                onInput={autoResize}
+                rows={1}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e as any);
+                  }
+                }}
+              />
+              <button
+                type="submit"
+                className={`absolute right-2.5 bottom-4 rounded-md ${
+                  input.length > 0 ? "bg-black" : "bg-slate-200"
+                } p-1`}
+              >
+                <Image src="/arrow.png" alt="arrow" width={25} height={25} />
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </>
   );
