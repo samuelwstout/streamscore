@@ -376,7 +376,7 @@ export default function Chat() {
                 <h1>Hello! How can I help you?</h1>
               </div>
             ) : (
-              <div className="flex flex-col overflow-y-auto hide-scrollbar px-10 py-5">
+              <div className="flex flex-col overflow-y-auto hide-scrollbar px-10 lg:px-20 py-5">
                 {messages.map((m) => (
                   <div className="pb-5 leading-7 text-sm" key={m.id}>
                     {m.role === "user" ? "You: " : "Streamscore: "}
@@ -390,10 +390,10 @@ export default function Chat() {
             onSubmit={handleSubmit}
             className="flex justify-center w-full sticky bottom-0 py-4 bg-white"
           >
-            <div className="relative w-1/2">
+            <div className="relative w-full lg:w-1/2 mx-10 md:w-2/3 border-2 border-gray-300 rounded-md">
               <textarea
                 value={input}
-                className="w-full pl-2 py-1 border-2 border-gray-300 rounded-md focus:outline-none overflow-y-hidden min-h-16 resize-none"
+                className="w-full px-2 py-1 focus:outline-none overflow-y-hidden resize-none text-sm"
                 placeholder="Type your message here..."
                 onChange={handleInputChange}
                 onInput={autoResize}
@@ -405,14 +405,16 @@ export default function Chat() {
                   }
                 }}
               />
-              <button
-                type="submit"
-                className={`absolute right-2.5 bottom-4 rounded-md ${
-                  input.length > 0 ? "bg-black" : "bg-slate-200"
-                } p-1`}
-              >
-                <Image src="/arrow.png" alt="arrow" width={25} height={25} />
-              </button>
+              <div className="flex justify-end items-center p-1">
+                <button
+                  type="submit"
+                  className={`rounded-md ${
+                    input.length > 0 ? "bg-black" : "bg-slate-200"
+                  } p-1`}
+                >
+                  <Image src="/arrow.png" alt="arrow" width={25} height={25} />
+                </button>
+              </div>
             </div>
           </form>
         </div>
