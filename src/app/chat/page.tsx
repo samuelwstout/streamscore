@@ -369,13 +369,11 @@ export default function Chat() {
           <span className="sr-only">Your profile</span>
         </div>
 
-        <div className="lg:ml-72 min-h-screen flex flex-col border border-blue-500">
+        <div className="lg:ml-72 min-h-screen flex flex-col">
           <div className="flex-grow">
             {isNewConversation ? (
-              <div className="flex justify-center items-center">
-                <div>
-                  <h1>Hello! How can I help you?</h1>
-                </div>
+              <div className="flex justify-center items-center h-screen">
+                <h1>Hello! How can I help you?</h1>
               </div>
             ) : (
               <div className="flex flex-col overflow-y-auto hide-scrollbar">
