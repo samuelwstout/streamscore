@@ -338,7 +338,10 @@ export default function Chat() {
                                       as="div"
                                       className="relative flex-none"
                                     >
-                                      <Menu.Button className="-m-2.5 block p-2.5 text-gray-500 hover:text-white">
+                                      <Menu.Button
+                                        className="-m-2.5 block p-2.5 text-gray-500 hover:text-white"
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
                                         <EllipsisVerticalIcon
                                           className="h-5 w-5"
                                           aria-hidden="true"
@@ -353,7 +356,10 @@ export default function Chat() {
                                         leaveFrom="transform opacity-100 scale-100"
                                         leaveTo="transform opacity-0 scale-95"
                                       >
-                                        <Menu.Items className="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
+                                        <Menu.Items
+                                          className="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
+                                          onClick={(e) => e.stopPropagation()}
+                                        >
                                           <Menu.Item>
                                             {({ active }) => (
                                               <div
