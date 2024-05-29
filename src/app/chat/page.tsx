@@ -38,6 +38,7 @@ export default function Chat() {
   const [conversationId, setConversationId] = useState<null | number>(null);
   const [clickedConv, setClickedConv] = useState<null | ClickedConvProps>(null);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [newConversationStarted, setNewConversationStarted] = useState(false);
 
   const { user } = useUser();
 
@@ -51,12 +52,20 @@ export default function Chat() {
   }, []);
 
   useEffect(() => {
-    if (chatFinished && isNewConversation) {
+    if (isNewConversation && messages.length > 0) {
+      setIsNewConversation(false);
+      setNewConversationStarted(true);
+    }
+  }, [isNewConversation, messages]);
+
+  useEffect(() => {
+    if (chatFinished && newConversationStarted) {
       addConversation();
-      setChatFinished(false);
+      setNewConversationStarted(false);
     } else if (chatFinished && !isNewConversation) {
       updateConversation();
     }
+    setChatFinished(false);
   }, [chatFinished, messages]);
 
   async function getConversations() {
@@ -92,6 +101,7 @@ export default function Chat() {
       }
       const responseData = await response.json();
       const { data } = responseData;
+      setConversationId(data.id);
       setConversations([...conversations, data]);
     } catch (error) {
       console.error(error);
