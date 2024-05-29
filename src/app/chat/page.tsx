@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useRef } from "react";
 import {
   Dialog,
   Transition,
@@ -12,11 +12,11 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { UserButton, useUser } from "@clerk/nextjs";
 import type { SelectConversation } from "@/db/schema";
-import { autoResize } from "@/utils/autoResizeInput";
 import { useChat } from "ai/react";
 import Image from "next/image";
 import type { Message } from "ai";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { autoResize } from "@/utils/autoResizeInput";
 
 interface ClickedConvProps {
   id: number;
@@ -46,6 +46,16 @@ export default function Chat() {
     useChat({
       onFinish: () => setChatFinished(true),
     });
+
+  const endOfChatRef = useRef<HTMLDivElement>(null);
+
+  function scrollToBottom() {
+    endOfChatRef.current?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     getConversations();
@@ -510,17 +520,26 @@ export default function Chat() {
                     {m.content}
                   </div>
                 ))}
+                <div ref={endOfChatRef} />
               </div>
             )}
           </div>
           <form
-            onSubmit={handleSubmit}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit(e as any);
+              scrollToBottom();
+              setTimeout(() => {
+                const event = new Event("input", { bubbles: true });
+                document.querySelector("textarea")?.dispatchEvent(event);
+              });
+            }}
             className="flex justify-center w-full sticky bottom-0 py-4 bg-white"
           >
             <div className="relative w-full lg:w-1/2 mx-10 md:w-2/3 border-2 border-gray-300 rounded-md">
               <textarea
                 value={input}
-                className="w-full px-2 py-1 focus:outline-none overflow-y-hidden resize-none text-sm"
+                className="w-full px-2 py-1 focus:outline-none overflow-y-hidden resize-none"
                 placeholder="Type your message here..."
                 onChange={handleInputChange}
                 onInput={autoResize}
@@ -529,6 +548,13 @@ export default function Chat() {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     handleSubmit(e as any);
+                    scrollToBottom();
+                    setTimeout(() => {
+                      const event = new Event("input", {
+                        bubbles: true,
+                      });
+                      document.querySelector("textarea")?.dispatchEvent(event);
+                    });
                   }
                 }}
               />
