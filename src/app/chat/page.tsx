@@ -489,7 +489,7 @@ export default function Chat() {
             ) : (
               <div className="flex flex-col overflow-y-auto hide-scrollbar px-10 lg:px-20 py-5 min-h-screen">
                 {messages.map((m) => (
-                  <div className="pb-5 leading-7 text-sm" key={m.id}>
+                  <div className="pb-5 leading-7" key={m.id}>
                     {m.role === "user" ? "You: " : "Streamscore: "}
                     {m.content}
                   </div>
