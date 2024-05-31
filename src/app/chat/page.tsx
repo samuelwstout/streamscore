@@ -17,6 +17,7 @@ import Image from "next/image";
 import type { Message } from "ai";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { autoResize } from "@/utils/autoResizeInput";
+import abcjs from "abcjs";
 
 interface ClickedConvProps {
   id: number;
@@ -27,6 +28,10 @@ interface ClickedConvProps {
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
+}
+
+function renderABC(abcString: string, elementId: string) {
+  abcjs.renderAbc(elementId, abcString);
 }
 
 export default function Chat() {
@@ -46,6 +51,14 @@ export default function Chat() {
     useChat({
       onFinish: () => setChatFinished(true),
     });
+
+  useEffect(() => {
+    messages.forEach((m, index) => {
+      if (m.content.includes("X:")) {
+        renderABC(m.content, `abc-container-${index}`);
+      }
+    });
+  }, [messages]);
 
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -488,10 +501,10 @@ export default function Chat() {
               </div>
             ) : (
               <div className="flex flex-col overflow-y-auto hide-scrollbar px-10 lg:px-20 py-5 min-h-screen">
-                {messages.map((m) => (
+                {messages.map((m: Message, index) => (
                   <div className="pb-5 leading-7" key={m.id}>
                     {m.role === "user" ? "You: " : "Streamscore: "}
-                    {m.content}
+                    <div id={`abc-container-${index}`}>{m.content}</div>
                   </div>
                 ))}
               </div>
