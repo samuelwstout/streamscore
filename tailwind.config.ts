@@ -21,6 +21,9 @@ const config: Config = {
       fontFamily: {
         sans: ["Inter var", ...defaultTheme.fontFamily.sans],
       },
+      height: {
+        "chat-view-height": "40rem",
+      },
     },
   },
   plugins: [],

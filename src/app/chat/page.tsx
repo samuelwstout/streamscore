@@ -509,7 +509,7 @@ export default function Chat() {
         <div className="lg:ml-72 min-h-screen flex flex-col">
           <div className="flex-grow">
             {isNewConversation ? (
-              <div className="flex justify-center items-center h-screen">
+              <div className="flex justify-center items-center h-chat-view-height border border-red-500">
                 <h1>Hello! How can I help you?</h1>
               </div>
             ) : (
