@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useState, useEffect, useRef } from "react";
+import { Fragment, useState, useEffect } from "react";
 import {
   Dialog,
   Transition,
@@ -173,14 +173,6 @@ export default function Chat() {
 
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
       <Transition show={deleteModal}>
         <Dialog className="relative z-10" onClose={setDeleteModal}>
           <TransitionChild
@@ -264,7 +256,7 @@ export default function Chat() {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div className="fixed inset-0 bg-gray-900/80" />
+              <div className="fixed inset-0 bg-black" />
             </Transition.Child>
 
             <div className="fixed inset-0 flex">
@@ -301,14 +293,8 @@ export default function Chat() {
                       </button>
                     </div>
                   </Transition.Child>
-                  {/* Sidebar component, swap this element with another sidebar if you like */}
-                  <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-2 ring-1 ring-white/10">
-                    <div className="flex h-16 shrink-0 items-center justify-between">
-                      <img
-                        className="h-8 w-auto"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                        alt="Streamscore"
-                      />
+                  <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-black px-6 pb-2 ring-1 ring-white/10">
+                    <div className="flex h-16 shrink-0 items-center">
                       <button onClick={startNewConversation}>
                         <Image
                           src="/startConversation.png"
@@ -397,14 +383,8 @@ export default function Chat() {
 
         {/* Static sidebar for desktop */}
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-          {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900">
-            <div className="flex h-16 shrink-0 items-center justify-between sticky top-0 bg-gray-900 z-10 px-6">
-              <img
-                className="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                alt="StreamScore"
-              />
+          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-black">
+            <div className="flex h-16 shrink-0 items-center sticky top-0 bg-black z-10 px-6">
               <button onClick={startNewConversation}>
                 <Image
                   src="/startConversation.png"
@@ -429,14 +409,14 @@ export default function Chat() {
                         <li
                           key={item.id}
                           onClick={() => getMessages(item.id)}
-                          className="flex items-center justify-between gap-x-3 py-3 hover:bg-gray-800 rounded-md group cursor-pointer"
+                          className="flex items-center justify-between gap-x-3 py-3 hover:bg-slate-800 rounded-md group cursor-pointer"
                         >
                           <div className="group-hover:text-white group flex text-sm leading-6 font-semibold truncate text-gray-400 px-2">
                             {item.title}
                           </div>
                           <div className="flex flex-none items-center gap-x-4">
                             <Menu as="div" className="relative flex-none">
-                              <Menu.Button className="-m-2.5 block p-2.5 text-gray-500 hover:text-white">
+                              <Menu.Button className="-m-2.5 block p-2.5 text-gray-400 hover:text-white">
                                 <EllipsisVerticalIcon
                                   className="h-5 w-5"
                                   aria-hidden="true"
@@ -476,7 +456,7 @@ export default function Chat() {
                       ))}
                   </ul>
                 </li>
-                <li className="sticky bottom-0 -mx-6 mt-auto bg-gray-900">
+                <li className="sticky bottom-0 -mx-6 mt-auto bg-black">
                   <div className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white">
                     <UserButton afterSignOutUrl="/" />
                     <span className="sr-only">Your profile</span>
@@ -488,7 +468,7 @@ export default function Chat() {
           </div>
         </div>
 
-        <div className="sticky top-0 z-40 flex items-center justify-between gap-x-6 bg-gray-900 px-4 py-4 shadow-sm sm:px-6 lg:hidden">
+        <div className="sticky top-0 z-40 flex items-center justify-between gap-x-6 bg-black px-4 py-4 shadow-sm sm:px-6 lg:hidden">
           <button
             type="button"
             className="-m-2.5 p-2.5 text-gray-400 lg:hidden"
