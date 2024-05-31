@@ -525,6 +525,11 @@ export default function Chat() {
                 const event = new Event("input", { bubbles: true });
                 document.querySelector("textarea")?.dispatchEvent(event);
               });
+              if (messages.length < 4) {
+                setTimeout(() => {
+                  scrollToTop();
+                }, 100);
+              }
             }}
             className="flex justify-center w-full sticky bottom-0 py-4 bg-white"
           >
@@ -546,6 +551,11 @@ export default function Chat() {
                       });
                       document.querySelector("textarea")?.dispatchEvent(event);
                     });
+                    if (messages.length < 4) {
+                      setTimeout(() => {
+                        scrollToTop();
+                      }, 100);
+                    }
                   }
                 }}
               />
