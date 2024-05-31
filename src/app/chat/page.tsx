@@ -506,14 +506,14 @@ export default function Chat() {
           <span className="sr-only">Your profile</span>
         </div>
 
-        <div className="lg:ml-72 min-h-screen flex flex-col">
+        <div className="lg:ml-72 flex flex-col">
           <div className="flex-grow">
             {isNewConversation ? (
-              <div className="flex justify-center items-center h-chat-view-height">
+              <div className="flex justify-center items-center h-chat-view-height-mobile lg:h-chat-view-height-desktop">
                 <h1>Hello! How can I help you?</h1>
               </div>
             ) : (
-              <div className="flex flex-col overflow-y-auto hide-scrollbar px-10 lg:px-20 py-5">
+              <div className="flex flex-col overflow-y-auto hide-scrollbar px-10 lg:px-20 py-5 min-h-chat-view-height-mobile lg:min-h-chat-view-height-desktop">
                 {messages.map((m) => (
                   <div className="pb-5 leading-7 text-sm" key={m.id}>
                     {m.role === "user" ? "You: " : "Streamscore: "}
