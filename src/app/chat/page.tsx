@@ -47,15 +47,9 @@ export default function Chat() {
       onFinish: () => setChatFinished(true),
     });
 
-  const endOfChatRef = useRef<HTMLDivElement>(null);
-
-  function scrollToBottom() {
-    endOfChatRef.current?.scrollIntoView({ behavior: "smooth" });
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   useEffect(() => {
     getConversations();
@@ -160,6 +154,7 @@ export default function Chat() {
   function getMessages(clickId: number) {
     setSidebarOpen(false);
     setIsNewConversation(false);
+    scrollToTop();
     const conversation = conversations.find((i) => i.id === clickId);
     if (conversation?.messages) {
       setMessages(conversation.messages);
@@ -505,22 +500,20 @@ export default function Chat() {
           <UserButton afterSignOutUrl="/" />
           <span className="sr-only">Your profile</span>
         </div>
-
         <div className="lg:ml-72 flex flex-col">
           <div className="flex-grow">
             {isNewConversation ? (
-              <div className="flex justify-center items-center h-chat-view-height-mobile lg:h-chat-view-height-desktop">
+              <div className="flex justify-center items-center min-h-screen">
                 <h1>Hello! How can I help you?</h1>
               </div>
             ) : (
-              <div className="flex flex-col overflow-y-auto hide-scrollbar px-10 lg:px-20 py-5 min-h-chat-view-height-mobile lg:min-h-chat-view-height-desktop">
+              <div className="flex flex-col overflow-y-auto hide-scrollbar px-10 lg:px-20 py-5 min-h-screen">
                 {messages.map((m) => (
                   <div className="pb-5 leading-7 text-sm" key={m.id}>
                     {m.role === "user" ? "You: " : "Streamscore: "}
                     {m.content}
                   </div>
                 ))}
-                <div ref={endOfChatRef} />
               </div>
             )}
           </div>
@@ -528,7 +521,6 @@ export default function Chat() {
             onSubmit={(e) => {
               e.preventDefault();
               handleSubmit(e as any);
-              scrollToBottom();
               setTimeout(() => {
                 const event = new Event("input", { bubbles: true });
                 document.querySelector("textarea")?.dispatchEvent(event);
@@ -548,7 +540,6 @@ export default function Chat() {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     handleSubmit(e as any);
-                    scrollToBottom();
                     setTimeout(() => {
                       const event = new Event("input", {
                         bubbles: true,

@@ -21,14 +21,6 @@ const config: Config = {
       fontFamily: {
         sans: ["Inter var", ...defaultTheme.fontFamily.sans],
       },
-      height: {
-        "chat-view-height-desktop": "54rem",
-        "chat-view-height-mobile": "30rem",
-      },
-      minHeight: {
-        "chat-view-height-desktop": "54rem",
-        "chat-view-height-mobile": "30rem",
-      },
     },
   },
   plugins: [],
