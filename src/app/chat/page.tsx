@@ -14,10 +14,15 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import type { SelectConversation } from "@/db/schema";
 import { useChat } from "ai/react";
 import Image from "next/image";
-import type { Message } from "ai";
+import type { Message as BaseMessage } from "ai";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { autoResize } from "@/utils/autoResizeInput";
 import abcjs from "abcjs";
+
+interface Message extends BaseMessage {
+  commentaryBefore?: string;
+  commentaryAfter?: string;
+}
 
 interface ClickedConvProps {
   id: number;
@@ -53,9 +58,21 @@ export default function Chat() {
     });
 
   useEffect(() => {
-    messages.forEach((m, index) => {
+    messages.forEach((m: Message, index) => {
       if (m.content.includes("X:")) {
-        renderABC(m.content, `abc-container-${index}`);
+        console.log("m.content: ", m.content);
+        const splitContent = m.content.split(
+          /(X:\d+[\s\S]*?K:[\s\S]*?\n[\s\S]*?```\n)/
+        );
+        console.log("splitContent: ", splitContent);
+        if (splitContent.length > 1) {
+          const commentaryBefore = splitContent[0];
+          const abcString = splitContent[1];
+          const commentaryAfter = splitContent[2] || "";
+          renderABC(abcString.trim(), `abc-container-${index}`);
+          m.commentaryBefore = commentaryBefore.trim();
+          m.commentaryAfter = commentaryAfter.trim();
+        }
       }
     });
   }, [messages]);
@@ -504,7 +521,17 @@ export default function Chat() {
                 {messages.map((m: Message, index) => (
                   <div className="pb-5 leading-7" key={m.id}>
                     {m.role === "user" ? "You: " : "Streamscore: "}
-                    <div id={`abc-container-${index}`}>{m.content}</div>
+                    <div>
+                      {m.content.includes("X:") ? (
+                        <>
+                          <div>{m.commentaryBefore}</div>
+                          <div id={`abc-container-${index}`} />
+                          <div>{m.commentaryAfter}</div>
+                        </>
+                      ) : (
+                        <div>{m.content}</div>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
