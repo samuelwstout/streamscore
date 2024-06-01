@@ -66,7 +66,7 @@ export default function Chat() {
         );
         console.log("splitContent: ", splitContent);
         if (splitContent.length > 1) {
-          const commentaryBefore = splitContent[0];
+          const commentaryBefore = splitContent[0].replace(/```/g, "");
           const abcString = splitContent[1];
           const commentaryAfter = splitContent[2] || "";
           renderABC(abcString.trim(), `abc-container-${index}`);
