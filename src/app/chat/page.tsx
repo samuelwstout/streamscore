@@ -58,39 +58,52 @@ export default function Chat() {
     });
 
   useEffect(() => {
+    let allMessagesReady = true;
+
     const newMessages = messages.map((m: Message, index) => {
-      console.log(m);
       if (m.content.includes("X:")) {
         const splitContent = m.content.split(
           /(X:\d+[\s\S]*?K:[\s\S]*?\n[\s\S]*?```\n)/
         );
-        return {
-          ...m,
-          splitContent: splitContent.map((part, partIndex) => {
-            if (part.includes("X:")) {
-              // Initially mark as not ready
-              return { content: part.trim(), isReady: false };
-            }
-            return { content: part.trim(), isReady: true };
-          }),
-        };
+        const updatedSplitContent = splitContent.map((part, partIndex) => {
+          if (part.includes("X:")) {
+            // Initially mark as not ready
+            allMessagesReady = false;
+            return { content: part.trim(), isReady: false };
+          }
+          return { content: part.trim().replace(/```/g, ""), isReady: true };
+        });
+
+        return { ...m, splitContent: updatedSplitContent };
       }
       return m; // Return unchanged if no ABC notation
     });
 
-    setMessages(newMessages);
-
-    // Asynchronously render ABC notation
-    newMessages.forEach((m, index) => {
-      m.splitContent?.forEach((part, partIndex) => {
-        if (part.content.includes("X:")) {
-          renderABC(part.content, `abc-container-${index}-${partIndex}`, () => {
-            part.isReady = true;
-            setMessages([...newMessages]);
-          });
-        }
+    if (allMessagesReady) {
+      setMessages(newMessages);
+    } else {
+      newMessages.forEach((m, index) => {
+        m.splitContent?.forEach((part, partIndex) => {
+          if (part.content.includes("X:") && !part.isReady) {
+            renderABC(
+              part.content,
+              `abc-container-${index}-${partIndex}`,
+              () => {
+                part.isReady = true;
+                // Check if all parts are now ready
+                const allPartsReady = newMessages.every(
+                  (msg) =>
+                    msg.splitContent?.every((part) => part.isReady) ?? true
+                );
+                if (allPartsReady) {
+                  setMessages(newMessages);
+                }
+              }
+            );
+          }
+        });
       });
-    });
+    }
   }, [messages]);
 
   function scrollToTop() {
