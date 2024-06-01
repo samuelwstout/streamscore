@@ -20,8 +20,7 @@ import { autoResize } from "@/utils/autoResizeInput";
 import abcjs from "abcjs";
 
 interface Message extends BaseMessage {
-  commentaryBefore?: string;
-  commentaryAfter?: string;
+  splitContent?: { content: string; isReady: boolean }[];
 }
 
 interface ClickedConvProps {
@@ -35,8 +34,9 @@ function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-function renderABC(abcString: string, elementId: string) {
+function renderABC(abcString: string, elementId: string, callback: () => void) {
   abcjs.renderAbc(elementId, abcString);
+  callback(); // Call the callback after rendering
 }
 
 export default function Chat() {
@@ -58,22 +58,38 @@ export default function Chat() {
     });
 
   useEffect(() => {
-    messages.forEach((m: Message, index) => {
+    const newMessages = messages.map((m: Message, index) => {
+      console.log(m);
       if (m.content.includes("X:")) {
-        console.log("m.content: ", m.content);
         const splitContent = m.content.split(
           /(X:\d+[\s\S]*?K:[\s\S]*?\n[\s\S]*?```\n)/
         );
-        console.log("splitContent: ", splitContent);
-        if (splitContent.length > 1) {
-          const commentaryBefore = splitContent[0].replace(/```/g, "");
-          const abcString = splitContent[1];
-          const commentaryAfter = splitContent[2] || "";
-          renderABC(abcString.trim(), `abc-container-${index}`);
-          m.commentaryBefore = commentaryBefore.trim();
-          m.commentaryAfter = commentaryAfter.trim();
-        }
+        return {
+          ...m,
+          splitContent: splitContent.map((part, partIndex) => {
+            if (part.includes("X:")) {
+              // Initially mark as not ready
+              return { content: part.trim(), isReady: false };
+            }
+            return { content: part.trim(), isReady: true };
+          }),
+        };
       }
+      return m; // Return unchanged if no ABC notation
+    });
+
+    setMessages(newMessages);
+
+    // Asynchronously render ABC notation
+    newMessages.forEach((m, index) => {
+      m.splitContent?.forEach((part, partIndex) => {
+        if (part.content.includes("X:")) {
+          renderABC(part.content, `abc-container-${index}-${partIndex}`, () => {
+            part.isReady = true;
+            setMessages([...newMessages]);
+          });
+        }
+      });
     });
   }, [messages]);
 
@@ -522,12 +538,22 @@ export default function Chat() {
                   <div className="pb-5 leading-7" key={m.id}>
                     {m.role === "user" ? "You: " : "Streamscore: "}
                     <div>
-                      {m.content.includes("X:") ? (
-                        <>
-                          <div>{m.commentaryBefore}</div>
-                          <div id={`abc-container-${index}`} />
-                          <div>{m.commentaryAfter}</div>
-                        </>
+                      {m.splitContent ? (
+                        m.splitContent.map((part, partIndex) => (
+                          <div key={partIndex}>
+                            {part.isReady ? (
+                              part.content.includes("X:") ? (
+                                <div
+                                  id={`abc-container-${index}-${partIndex}`}
+                                />
+                              ) : (
+                                <div>{part.content}</div>
+                              )
+                            ) : (
+                              <div>Loading...</div> // Placeholder or loading indicator
+                            )}
+                          </div>
+                        ))
                       ) : (
                         <div>{m.content}</div>
                       )}
