@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Dialog,
   Transition,
@@ -560,7 +560,16 @@ export default function Chat() {
                                   id={`abc-container-${index}-${partIndex}`}
                                 />
                               ) : (
-                                <div>{part.content}</div>
+                                <div>
+                                  {part.content
+                                    .split("\n")
+                                    .map((line, index) => (
+                                      <React.Fragment key={index}>
+                                        {line}
+                                        <br />
+                                      </React.Fragment>
+                                    ))}
+                                </div>
                               )
                             ) : (
                               <div>Loading...</div> // Placeholder or loading indicator
