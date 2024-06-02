@@ -13,7 +13,7 @@ export default function Landing() {
                 Welcome to Streamscore!
               </h1>
               <p className="mt-6 text-lg leading-8 text-gray-600">
-                Feel free to peek at my current progress building an LLM chat
+                Feel free to peek at my current progress building a LLM chat
                 interface dedicated to rendering music notation.
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
