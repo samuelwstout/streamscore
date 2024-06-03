@@ -18,6 +18,7 @@ import type { Message as BaseMessage } from "ai";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { autoResize } from "@/utils/autoResizeInput";
 import abcjs from "abcjs";
+import ReactMarkdown from "react-markdown";
 
 interface Message extends BaseMessage {
   splitContent?: { content: string; isReady: boolean }[];
@@ -560,16 +561,7 @@ export default function Chat() {
                                   id={`abc-container-${index}-${partIndex}`}
                                 />
                               ) : (
-                                <div>
-                                  {part.content
-                                    .split("\n")
-                                    .map((line, index) => (
-                                      <React.Fragment key={index}>
-                                        {line}
-                                        <br />
-                                      </React.Fragment>
-                                    ))}
-                                </div>
+                                <ReactMarkdown>{part.content}</ReactMarkdown>
                               )
                             ) : (
                               <div>Loading...</div> // Placeholder or loading indicator
@@ -577,7 +569,7 @@ export default function Chat() {
                           </div>
                         ))
                       ) : (
-                        <div>{m.content}</div>
+                        <ReactMarkdown>{m.content}</ReactMarkdown>
                       )}
                     </div>
                   </div>
