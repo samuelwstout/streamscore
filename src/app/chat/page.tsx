@@ -557,9 +557,12 @@ export default function Chat() {
                           <div key={partIndex}>
                             {part.isReady ? (
                               part.content.includes("X:") ? (
-                                <div
-                                  id={`abc-container-${index}-${partIndex}`}
-                                />
+                                <div className="overflow-x-auto">
+                                  <div
+                                    id={`abc-container-${index}-${partIndex}`}
+                                    className="min-w-[575px]"
+                                  />
+                                </div>
                               ) : (
                                 <ReactMarkdown>{part.content}</ReactMarkdown>
                               )
