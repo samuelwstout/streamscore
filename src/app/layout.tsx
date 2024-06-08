@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Streamscore",
-  description: "an AI tool for music education",
+  description: "an AI tool for music composition/education",
 };
 
 export default function RootLayout({
