@@ -17,8 +17,15 @@ export async function POST(req: Request) {
       ...messages,
       {
         role: "system",
-        content:
-          "Please include ABC notation and any necessary commentary in your responses.",
+        content: `
+        This is a chat interface for technical music questions. 
+        Return ABC notation as much as possible. 
+        This UI converts ABC notation to sheet music. 
+        Use simple, easy-to-read ABC notation with quarter notes by default, not eighth notes by default.
+        Avoid fancy embellishments unless explicitly requested. 
+        Keep it simple. 
+        Don't explicitly say that you're using ABC notation. Say it's music notation.
+        `,
       },
     ],
   });
