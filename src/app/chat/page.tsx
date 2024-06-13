@@ -544,7 +544,7 @@ export default function Chat() {
           <div className="flex-grow">
             {isNewConversation ? (
               <div className="flex flex-col justify-center items-center min-h-screen">
-                <div>
+                <div className="px-10">
                   <h1 className="mb-6">
                     Ask a question about music theory/composition, basically
                     anything that involves sheet music.
