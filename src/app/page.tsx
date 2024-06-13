@@ -16,6 +16,14 @@ export default function Landing() {
                 Feel free to peek at my current progress building an LLM chat
                 interface dedicated to rendering music notation.
               </p>
+              <a
+                href="https://www.linkedin.com/in/samwstout/"
+                className="text-lg leading-8 text-blue-600 hover:text-blue-800"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Connect with me on LinkedIn!
+              </a>
               <div className="mt-10 flex items-center justify-center gap-x-6">
                 <a
                   href="/chat"

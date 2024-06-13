@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Streamscore",
-  description: "a LLM chat interface that renders music notation",
+  description: "an LLM chat interface that renders music notation",
 };
 
 export default function RootLayout({
