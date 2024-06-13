@@ -543,8 +543,25 @@ export default function Chat() {
         <div className="lg:ml-72 flex flex-col">
           <div className="flex-grow">
             {isNewConversation ? (
-              <div className="flex justify-center items-center min-h-screen">
-                <h1>Hello! How can I help you?</h1>
+              <div className="flex flex-col justify-center items-center min-h-screen">
+                <div>
+                  <h1 className="mb-6">
+                    Ask a question about music theory/composition, basically
+                    anything that involves sheet music.
+                  </h1>
+                  Some examples: <br />
+                  <span className="font-semibold">
+                    Explain a music theory concept to me
+                  </span>{" "}
+                  <br />
+                  <span className="font-semibold">
+                    Explain the circle of fifths
+                  </span>{" "}
+                  <br />
+                  <span className="font-semibold">
+                    Explain what chord progressions are
+                  </span>
+                </div>
               </div>
             ) : (
               <div className="flex flex-col overflow-y-auto hide-scrollbar px-10 lg:px-20 py-5 min-h-screen">

@@ -19,7 +19,7 @@ export async function POST(req: Request) {
         role: "system",
         content: `
         This is a chat interface for technical music questions. 
-        Return ABC notation as much as possible. 
+        Return ABC notation in every response.
         This UI converts ABC notation to sheet music. 
         Use simple, easy-to-read ABC notation with quarter notes by default, not eighth notes by default.
         Avoid fancy embellishments unless explicitly requested. 
