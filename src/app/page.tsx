@@ -12,7 +12,7 @@ export default function Landing() {
               <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
                 Welcome to Streamscore!
               </h1>
-              <p className="mt-6 text-lg leading-8 text-gray-600">
+              <p className="mt-3 text-lg leading-8 text-gray-600">
                 Feel free to peek at my current progress building an LLM chat
                 interface dedicated to rendering music notation.
               </p>
@@ -24,7 +24,7 @@ export default function Landing() {
               >
                 Connect with me on LinkedIn!
               </a>
-              <div className="mt-10 flex items-center justify-center gap-x-6">
+              <div className="mt-3 flex items-center justify-center gap-x-6">
                 <a
                   href="/chat"
                   className="rounded-md bg-black px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"

@@ -572,19 +572,25 @@ export default function Chat() {
                       {m.splitContent ? (
                         m.splitContent.map((part, partIndex) => (
                           <div key={partIndex}>
-                            {part.isReady ? (
-                              part.content.includes("X:") ? (
-                                <div className="overflow-x-auto">
-                                  <div
-                                    id={`abc-container-${index}-${partIndex}`}
-                                    className="min-w-[575px]"
-                                  />
-                                </div>
-                              ) : (
-                                <ReactMarkdown>{part.content}</ReactMarkdown>
-                              )
-                            ) : (
-                              <div>Loading...</div> // Placeholder or loading indicator
+                            <ReactMarkdown>
+                              {part.content.replace(
+                                /X:\d+[\s\S]*?K:[\s\S]*?\n[\s\S]*?```/g,
+                                ""
+                              )}
+                            </ReactMarkdown>
+                            {part.content.includes("X:") && (
+                              <>
+                                {part.isReady ? (
+                                  <div className="overflow-x-auto">
+                                    <div
+                                      id={`abc-container-${index}-${partIndex}`}
+                                      className="min-w-[575px]"
+                                    />
+                                  </div>
+                                ) : (
+                                  <div>Loading...</div>
+                                )}
+                              </>
                             )}
                           </div>
                         ))
