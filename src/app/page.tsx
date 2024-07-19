@@ -17,13 +17,13 @@ export default function Landing() {
           aria-hidden="true"
         ></div>
         <div className="py-24 sm:py-32">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
               <Trail open={open}>
-                <h1 className="text-6xl font-bold tracking-tight text-gray-900">
+                <h1 className="text-5xl lg:text-6xl font-bold tracking-tight text-gray-900">
                   Streamscore
                 </h1>
-                <h1 className="text-xl font-bold tracking-tight text-gray-900">
+                <h1 className="text-base lg:text-xl font-bold tracking-tight text-gray-900">
                   an LLM chat interface that renders sheet music.
                 </h1>
                 <div className="flex items-center justify-center">
