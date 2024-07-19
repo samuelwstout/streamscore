@@ -19,9 +19,11 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { autoResize } from "@/utils/autoResizeInput";
 import abcjs from "abcjs";
 import ReactMarkdown from "react-markdown";
+import { ABCNotationRegex } from "@/utils/regex";
+import { removeTripleBackticks } from "@/utils/stringUtils";
 
 interface Message extends BaseMessage {
-  splitContent?: { content: string; isReady: boolean }[];
+  processedMessage?: { content: string; isReady: boolean }[];
 }
 
 interface ClickedConvProps {
@@ -60,47 +62,47 @@ export default function Chat() {
 
   useEffect(() => {
     let allMessagesReady = true;
-
-    const newMessages = messages.map((m: Message, index) => {
-      if (m.content.includes("X:")) {
-        const splitContent = m.content.split(
-          /(X:\d+[\s\S]*?K:[\s\S]*?\n[\s\S]*?```\n)/
-        );
-        const updatedSplitContent = splitContent.map((part, partIndex) => {
-          if (part.includes("X:")) {
-            // Initially mark as not ready
+    const ABCNotationSyntax = "X:";
+    const newMessages = messages.map((m: Message) => {
+      if (m.content.includes(ABCNotationSyntax)) {
+        const separatedMessage = m.content.split(ABCNotationRegex);
+        const updatedSplitContent = separatedMessage.map((part) => {
+          if (part.includes(ABCNotationSyntax)) {
             allMessagesReady = false;
             return { content: part.trim(), isReady: false };
           }
-          return { content: part.trim().replace(/```/g, ""), isReady: true };
+          return { content: removeTripleBackticks(part), isReady: true };
         });
-
-        return { ...m, splitContent: updatedSplitContent };
+        return { ...m, processedMessage: updatedSplitContent };
       }
-      return m; // Return unchanged if no ABC notation
+      return m;
     });
 
     if (allMessagesReady) {
       setMessages(newMessages);
     } else {
-      newMessages.forEach((m, index) => {
-        m.splitContent?.forEach((part, partIndex) => {
-          if (part.content.includes("X:") && !part.isReady) {
-            renderABC(
-              part.content,
-              `abc-container-${index}-${partIndex}`,
-              () => {
-                part.isReady = true;
-                // Check if all parts are now ready
-                const allPartsReady = newMessages.every(
-                  (msg) =>
-                    msg.splitContent?.every((part) => part.isReady) ?? true
-                );
-                if (allPartsReady) {
-                  setMessages(newMessages);
-                }
-              }
-            );
+      const partsToRender = newMessages
+        .flatMap(
+          (m, index) =>
+            m.processedMessage?.map((part, partIndex) => ({
+              part,
+              index,
+              partIndex,
+            })) || []
+        )
+        .filter(
+          ({ part }) =>
+            part.content.includes(ABCNotationSyntax) && !part.isReady
+        );
+
+      partsToRender.forEach(({ part, index, partIndex }) => {
+        renderABC(part.content, `abc-container-${index}-${partIndex}`, () => {
+          part.isReady = true;
+          const allPartsReady = newMessages.every(
+            (msg) => msg.processedMessage?.every((part) => part.isReady) ?? true
+          );
+          if (allPartsReady) {
+            setMessages(newMessages);
           }
         });
       });
@@ -569,8 +571,8 @@ export default function Chat() {
                   <div className="pb-5 leading-7" key={m.id}>
                     {m.role === "user" ? "You: " : "Streamscore: "}
                     <div>
-                      {m.splitContent ? (
-                        m.splitContent.map((part, partIndex) => (
+                      {m.processedMessage ? (
+                        m.processedMessage.map((part, partIndex) => (
                           <div key={partIndex}>
                             <ReactMarkdown>
                               {part.content.replace(
