@@ -547,22 +547,10 @@ export default function Chat() {
             {isNewConversation ? (
               <div className="flex flex-col justify-center items-center min-h-screen">
                 <div className="px-10">
-                  <h1 className="mb-6">
+                  <h1>
                     Ask a question about music theory/composition, basically
                     anything that involves sheet music.
                   </h1>
-                  Some examples: <br />
-                  <span className="font-semibold">
-                    Explain a music theory concept to me
-                  </span>{" "}
-                  <br />
-                  <span className="font-semibold">
-                    Explain the circle of fifths
-                  </span>{" "}
-                  <br />
-                  <span className="font-semibold">
-                    Explain what chord progressions are
-                  </span>
                 </div>
               </div>
             ) : (
