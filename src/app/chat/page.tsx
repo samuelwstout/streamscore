@@ -39,8 +39,10 @@ function classNames(...classes: any[]) {
 
 function renderABC(abcString: string, elementId: string, callback: () => void) {
   abcjs.renderAbc(elementId, abcString);
-  callback(); // Call the callback after rendering
+  callback();
 }
+
+const ABCNotationSyntax = "X:";
 
 export default function Chat() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -62,7 +64,6 @@ export default function Chat() {
 
   useEffect(() => {
     let allMessagesReady = true;
-    const ABCNotationSyntax = "X:";
     const newMessages = messages.map((m: Message) => {
       if (m.content.includes(ABCNotationSyntax)) {
         const separatedMessage = m.content.split(ABCNotationRegex);
@@ -568,7 +569,7 @@ export default function Chat() {
                                 ""
                               )}
                             </ReactMarkdown>
-                            {part.content.includes("X:") && (
+                            {part.content.includes(ABCNotationSyntax) && (
                               <>
                                 {part.isReady ? (
                                   <div className="overflow-x-auto">
