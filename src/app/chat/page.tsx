@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useRef } from "react";
 import {
   Dialog,
   Transition,
@@ -18,6 +18,7 @@ import type { Message } from "ai";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { autoResize } from "@/utils/autoResizeInput";
 import ReactMarkdown from "react-markdown";
+import { renderAbc } from "abcjs";
 
 interface ClickedConvProps {
   id: number;
@@ -29,6 +30,24 @@ interface ClickedConvProps {
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
+
+function extractABC(content: string): string | null {
+  const abcRegex = /```([^`]+)```/;
+  const match = content.match(abcRegex);
+  return match ? match[1].trim() : null;
+}
+
+const ABCNotation: React.FC<{ content: string }> = ({ content }) => {
+  const abcContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (abcContainerRef.current) {
+      renderAbc(abcContainerRef.current, content);
+    }
+  }, [content]);
+
+  return <div ref={abcContainerRef}></div>;
+};
 
 export default function Chat() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -494,14 +513,26 @@ export default function Chat() {
               </div>
             ) : (
               <div className="flex flex-col overflow-y-auto hide-scrollbar px-10 lg:px-20 py-5 min-h-screen">
-                {messages.map((m: Message) => (
-                  <div className="pb-5 leading-7" key={m.id}>
-                    {m.role === "user" ? "You: " : "Streamscore: "}
-                    <div>
-                      <ReactMarkdown>{m.content}</ReactMarkdown>
+                {messages.map((m: Message) => {
+                  const abcContent = extractABC(m.content);
+                  return (
+                    <div className="pb-5 leading-7" key={m.id}>
+                      {m.role === "user" ? "You: " : "Streamscore: "}
+                      <div>
+                        {abcContent ? (
+                          <>
+                            <ReactMarkdown>
+                              {m.content.replace(/```([^`]+)```/, "")}
+                            </ReactMarkdown>
+                            <ABCNotation content={abcContent} />
+                          </>
+                        ) : (
+                          <ReactMarkdown>{m.content}</ReactMarkdown>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
