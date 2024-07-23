@@ -14,17 +14,10 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import type { SelectConversation } from "@/db/schema";
 import { useChat } from "ai/react";
 import Image from "next/image";
-import type { Message as BaseMessage } from "ai";
+import type { Message } from "ai";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { autoResize } from "@/utils/autoResizeInput";
-import abcjs from "abcjs";
 import ReactMarkdown from "react-markdown";
-import { ABCNotationRegex } from "@/utils/regex";
-import { removeTripleBackticks } from "@/utils/stringUtils";
-
-interface Message extends BaseMessage {
-  processedMessage?: { content: string; isReady: boolean }[];
-}
 
 interface ClickedConvProps {
   id: number;
@@ -36,13 +29,6 @@ interface ClickedConvProps {
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
-
-function renderABC(abcString: string, elementId: string, callback: () => void) {
-  abcjs.renderAbc(elementId, abcString);
-  callback();
-}
-
-const ABCNotationSyntax = "X:";
 
 export default function Chat() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -61,54 +47,6 @@ export default function Chat() {
     useChat({
       onFinish: () => setChatFinished(true),
     });
-
-  useEffect(() => {
-    let allMessagesReady = true;
-    const newMessages = messages.map((m: Message) => {
-      if (m.content.includes(ABCNotationSyntax)) {
-        const separatedMessage = m.content.split(ABCNotationRegex);
-        const updatedSplitContent = separatedMessage.map((part) => {
-          if (part.includes(ABCNotationSyntax)) {
-            allMessagesReady = false;
-            return { content: part.trim(), isReady: false };
-          }
-          return { content: removeTripleBackticks(part), isReady: true };
-        });
-        return { ...m, processedMessage: updatedSplitContent };
-      }
-      return m;
-    });
-
-    if (allMessagesReady) {
-      setMessages(newMessages);
-    } else {
-      const partsToRender = newMessages
-        .flatMap(
-          (m, index) =>
-            m.processedMessage?.map((part, partIndex) => ({
-              part,
-              index,
-              partIndex,
-            })) || []
-        )
-        .filter(
-          ({ part }) =>
-            part.content.includes(ABCNotationSyntax) && !part.isReady
-        );
-
-      partsToRender.forEach(({ part, index, partIndex }) => {
-        renderABC(part.content, `abc-container-${index}-${partIndex}`, () => {
-          part.isReady = true;
-          const allPartsReady = newMessages.every(
-            (msg) => msg.processedMessage?.every((part) => part.isReady) ?? true
-          );
-          if (allPartsReady) {
-            setMessages(newMessages);
-          }
-        });
-      });
-    }
-  }, [messages]);
 
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -556,38 +494,11 @@ export default function Chat() {
               </div>
             ) : (
               <div className="flex flex-col overflow-y-auto hide-scrollbar px-10 lg:px-20 py-5 min-h-screen">
-                {messages.map((m: Message, index) => (
+                {messages.map((m: Message) => (
                   <div className="pb-5 leading-7" key={m.id}>
                     {m.role === "user" ? "You: " : "Streamscore: "}
                     <div>
-                      {m.processedMessage ? (
-                        m.processedMessage.map((part, partIndex) => (
-                          <div key={partIndex}>
-                            <ReactMarkdown>
-                              {part.content.replace(
-                                /X:\d+[\s\S]*?K:[\s\S]*?\n[\s\S]*?```/g,
-                                ""
-                              )}
-                            </ReactMarkdown>
-                            {part.content.includes(ABCNotationSyntax) && (
-                              <>
-                                {part.isReady ? (
-                                  <div className="overflow-x-auto">
-                                    <div
-                                      id={`abc-container-${index}-${partIndex}`}
-                                      className="min-w-[575px]"
-                                    />
-                                  </div>
-                                ) : (
-                                  <div>Loading...</div>
-                                )}
-                              </>
-                            )}
-                          </div>
-                        ))
-                      ) : (
-                        <ReactMarkdown>{m.content}</ReactMarkdown>
-                      )}
+                      <ReactMarkdown>{m.content}</ReactMarkdown>
                     </div>
                   </div>
                 ))}
