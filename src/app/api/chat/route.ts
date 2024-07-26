@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { OpenAIStream, StreamingTextResponse } from "ai";
-import { prompt } from "@/utils/prompt";
+import { prompt } from "@/prompt";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

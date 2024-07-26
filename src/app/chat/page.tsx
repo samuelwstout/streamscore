@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment, useState, useEffect, useRef } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Dialog,
   Transition,
@@ -18,7 +18,7 @@ import type { Message } from "ai";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { autoResize } from "@/utils/autoResizeInput";
 import ReactMarkdown from "react-markdown";
-import { renderAbc } from "abcjs";
+import ABCNotation from "../_components/ABCNotation/ABCNotation";
 
 interface ClickedConvProps {
   id: number;
@@ -36,18 +36,6 @@ function extractABC(content: string): string | null {
   const match = content.match(abcRegex);
   return match ? match[1].trim() : null;
 }
-
-const ABCNotation: React.FC<{ content: string }> = ({ content }) => {
-  const abcContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (abcContainerRef.current) {
-      renderAbc(abcContainerRef.current, content);
-    }
-  }, [content]);
-
-  return <div ref={abcContainerRef}></div>;
-};
 
 export default function Chat() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
