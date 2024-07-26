@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Trail } from "./_components/Trail/Trail";
+import ABCNotation from "./_components/ABCNotation/ABCNotation";
 
 export default function Landing() {
   const [open, setOpen] = useState(false);
@@ -9,16 +10,19 @@ export default function Landing() {
     setOpen(true);
   }, []);
 
+  const abcContent = `
+    X: 1
+    L: 1/4
+    K: Ab
+    E A B b a c e E A B b a c e
+  `;
+
   return (
     <div className="bg-white">
       <div className="relative isolate pt-14">
-        <div
-          className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
-          aria-hidden="true"
-        ></div>
         <div className="py-24 sm:py-32">
           <div className="mx-auto max-w-7xl lg:px-8">
-            <div className="mx-auto max-w-2xl text-center">
+            <div className="mx-auto max-w-3xl text-center">
               <Trail open={open}>
                 <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight text-gray-900">
                   streamscore
@@ -26,7 +30,10 @@ export default function Landing() {
                 <h1 className="text-base lg:text-xl font-normal tracking-tight text-gray-900">
                   generative AI for sheet music
                 </h1>
-                <div className="flex items-center justify-center">
+
+                <ABCNotation content={abcContent} />
+
+                <div className="flex items-center justify-center mt-8">
                   <a
                     href="/chat"
                     className="rounded-md bg-black px-3.5 py-2.5 text-sm font-normal tracking-tight text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
