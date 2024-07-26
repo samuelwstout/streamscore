@@ -19,23 +19,9 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { autoResize } from "@/utils/autoResizeInput";
 import ReactMarkdown from "react-markdown";
 import ABCNotation from "../_components/ABCNotation/ABCNotation";
-
-interface ClickedConvProps {
-  id: number;
-  userId: string | null;
-  title: string | null;
-  messages: Message[] | null;
-}
-
-function classNames(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
-function extractABC(content: string): string | null {
-  const abcRegex = /```([^`]+)```/;
-  const match = content.match(abcRegex);
-  return match ? match[1].trim() : null;
-}
+import { classNames, scrollToTop } from "@/utils/styleUtils";
+import { extractABC } from "@/utils/abcUtils";
+import { ClickedConvProps } from "@/types/conversationTypes";
 
 export default function Chat() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -54,10 +40,6 @@ export default function Chat() {
     useChat({
       onFinish: () => setChatFinished(true),
     });
-
-  function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
 
   useEffect(() => {
     getConversations();
