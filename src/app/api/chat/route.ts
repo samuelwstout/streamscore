@@ -1,28 +1,20 @@
-import OpenAI from "openai";
-import { OpenAIStream, StreamingTextResponse } from "ai";
 import { prompt } from "@/prompt";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-export const runtime = "edge";
+import { google } from "@ai-sdk/google";
+import { streamText } from "ai";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o",
-    stream: true,
+  const result = await streamText({
+    model: google("models/gemini-1.5-pro-latest"),
     messages: [
-      ...messages,
       {
         role: "system",
         content: prompt,
       },
+      ...messages,
     ],
   });
 
-  const stream = OpenAIStream(response);
-  return new StreamingTextResponse(stream);
+  return result.toDataStreamResponse();
 }
