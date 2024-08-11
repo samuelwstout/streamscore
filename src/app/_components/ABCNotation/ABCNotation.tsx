@@ -10,9 +10,7 @@ function ABCNotation({ content }: { content: string }) {
 
   useEffect(() => {
     if (abcContainerRef.current) {
-      const visualObj = renderAbc(abcContainerRef.current, content, {
-        responsive: "resize",
-      })[0];
+      const visualObj = renderAbc(abcContainerRef.current, content)[0];
 
       if (audioContext && midiBuffer) {
         midiBuffer
@@ -38,6 +36,27 @@ function ABCNotation({ content }: { content: string }) {
       setAudioContext(newAudioContext);
       const newMidiBuffer = new synth.CreateSynth();
       setMidiBuffer(newMidiBuffer);
+
+      if (abcContainerRef.current) {
+        const visualObj = renderAbc(abcContainerRef.current, content)[0];
+
+        newMidiBuffer
+          .init({
+            visualObj: visualObj,
+            audioContext: newAudioContext,
+            millisecondsPerMeasure: visualObj.millisecondsPerMeasure(),
+          })
+          .then(() => {
+            return newMidiBuffer.prime();
+          })
+          .then(() => {
+            newMidiBuffer.start();
+            setIsPlaying(true);
+          })
+          .catch((error: any) => {
+            console.warn("synth error", error);
+          });
+      }
     } else if (midiBuffer) {
       midiBuffer.start();
       setIsPlaying(true);
@@ -57,7 +76,7 @@ function ABCNotation({ content }: { content: string }) {
       <button
         type="button"
         onClick={isPlaying ? handleStop : handlePlay}
-        className="rounded-full bg-black p-2 text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="rounded-full bg-black p-2 text-white shadow-sm hover:bg-gray-600 focus-visible:outline mt-3 flex items-center justify-center w-10 h-10"
       >
         {isPlaying ? (
           <StopIcon aria-hidden="true" className="h-5 w-5" />
