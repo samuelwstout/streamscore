@@ -22,6 +22,7 @@ import ABCNotation from "../_components/ABCNotation/ABCNotation";
 import { classNames, scrollToTop } from "@/utils/styleUtils";
 import { extractABC } from "@/utils/abcUtils";
 import { ClickedConvProps } from "@/types/conversationTypes";
+import { samplePrompts } from "@/samplePrompts";
 
 export default function Chat() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -36,10 +37,16 @@ export default function Chat() {
 
   const { user } = useUser();
 
-  const { messages, input, handleInputChange, handleSubmit, setMessages } =
-    useChat({
-      onFinish: () => setChatFinished(true),
-    });
+  const {
+    messages,
+    input,
+    handleInputChange,
+    setInput,
+    handleSubmit,
+    setMessages,
+  } = useChat({
+    onFinish: () => setChatFinished(true),
+  });
 
   useEffect(() => {
     getConversations();
@@ -474,17 +481,24 @@ export default function Chat() {
           <div className="flex-grow">
             {isNewConversation ? (
               <div className="flex flex-col justify-center items-center min-h-screen">
-                <div className="px-10">
-                  <h1>
-                    Ask a question about music theory/composition, basically
-                    anything that involves sheet music.
-                  </h1>
+                <div className="container px-4 sm:px-6 lg:px-8 grid grid-cols-3 gap-2 my-5">
+                  {samplePrompts.map((samplePrompt, index) => (
+                    <button
+                      onClick={() => setInput(samplePrompt)}
+                      key={index}
+                      type="button"
+                      className="rounded bg-indigo-50 text-xs font-semibold text-black shadow-sm hover:bg-indigo-100 p-5"
+                    >
+                      {samplePrompt}
+                    </button>
+                  ))}
                 </div>
               </div>
             ) : (
               <div className="flex flex-col overflow-y-auto hide-scrollbar px-10 lg:px-20 py-5 min-h-screen">
                 {messages.map((m: Message) => {
                   const abcContent = extractABC(m.content);
+                  console.log("abcContent:", abcContent);
                   return (
                     <div className="pb-5 leading-7" key={m.id}>
                       {m.role === "user" ? "You: " : "Streamscore: "}
