@@ -28,7 +28,7 @@ export default function Landing() {
                   streamscore
                 </h1>
                 <h1 className="text-base lg:text-xl font-normal tracking-tight text-gray-900">
-                  generative AI for sheet music
+                  generative AI for sheet music powered by Gemini
                 </h1>
 
                 <ABCNotation content={abcContent} />
