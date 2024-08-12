@@ -498,7 +498,6 @@ export default function Chat() {
               <div className="flex flex-col overflow-y-auto hide-scrollbar px-10 lg:px-20 py-5 min-h-screen">
                 {messages.map((m: Message) => {
                   const abcContent = extractABC(m.content);
-                  console.log("abcContent:", abcContent);
                   return (
                     <div className="pb-5 leading-7" key={m.id}>
                       {m.role === "user" ? "You: " : "Streamscore: "}
