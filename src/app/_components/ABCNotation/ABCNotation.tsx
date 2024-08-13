@@ -18,6 +18,11 @@ function ABCNotation({ content }: { content: string }) {
             visualObj: visualObj,
             audioContext: audioContext,
             millisecondsPerMeasure: visualObj.millisecondsPerMeasure(),
+            options: {
+              onEnded: () => {
+                setIsPlaying(false);
+              },
+            },
           })
           .then(() => {
             return midiBuffer.prime();
@@ -45,6 +50,11 @@ function ABCNotation({ content }: { content: string }) {
             visualObj: visualObj,
             audioContext: newAudioContext,
             millisecondsPerMeasure: visualObj.millisecondsPerMeasure(),
+            options: {
+              onEnded: () => {
+                setIsPlaying(false);
+              },
+            },
           })
           .then(() => {
             return newMidiBuffer.prime();
